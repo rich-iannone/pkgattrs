@@ -1,0 +1,41 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# pkgattrs
+
+The goal of pkgattrs is to get information on the contents of an R package. So far, we can obtain of summary of functions available in a package using the `get_pkg_fcn_info()` function. Here is an example of that for the `blastula` package.
+
+```{r}
+library(pkgattrs)
+
+blastula_fcn_info <-
+  get_pkg_fcn_info(pkg_location = "~/Documents/R_oss_work/blastula/")
+```
+
+The resulting tibble contains a line for every function, which file each is located, starting/ending line numbers, and more.
+
+```{r}
+blastula_fcn_info
+```
+
+## Installation
+
+You can install pkgattrs from GitHub with:
+
+```{r gh-installation, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("rich-iannone/pkgattrs")
+```
+
