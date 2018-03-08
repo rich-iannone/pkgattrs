@@ -6,7 +6,7 @@
 #' directory of a package.
 #' @importFrom stringr str_detect str_replace str_replace_all
 #' @importFrom stringr str_split_fixed fixed
-#' @importFrom dplyr tibble mutate pull inner_join group_by
+#' @importFrom dplyr tibble mutate pull inner_join group_by rename
 #' @importFrom purrr map_df
 #' @importFrom tidyr nest
 #' @export
@@ -66,9 +66,9 @@ get_pkg_fcn_info <- function(pkg_location) {
           string = r_file,
           pattern = stringr::fixed("./R/"),
           replacement = "")) %>%
-        dplyr::mutate(line_start = line_numbers_start) %>%
-        dplyr::mutate(line_end = line_numbers_end) %>%
-        dplyr::mutate(lines = (line_end - line_start + 1) %>% as.integer()) %>%
+        dplyr::mutate(ln_start = line_numbers_start) %>%
+        dplyr::mutate(ln_end = line_numbers_end) %>%
+        dplyr::mutate(lines = (ln_end - ln_start + 1) %>% as.integer()) %>%
         dplyr::mutate(exported = ifelse(
           fcn_name %in% exported_fcns, TRUE, FALSE))
     })
@@ -127,7 +127,7 @@ get_pkg_fcn_info <- function(pkg_location) {
           tbl_row %>%
           dplyr::inner_join(
             dplyr::tibble(
-              n_pkg_fcns_called = length(called_functions),
+              n_pkg_fcns_called = length(called_functions) %>% as.integer(),
               names_fcns_called = called_functions),
             by = "n_pkg_fcns_called")
 
@@ -136,7 +136,7 @@ get_pkg_fcn_info <- function(pkg_location) {
         fcn_info_tbl[x, 7] <- 0
         fcn_info_tbl[x, 8] <- NA_character_
 
-        tbl_row <- tbl_row %>% dplyr::mutate(n_pkg_fcns_called = 0)
+        tbl_row <- tbl_row %>% dplyr::mutate(n_pkg_fcns_called = 0L)
         tbl_row <- tbl_row %>% dplyr::mutate(names_fcns_called = NA_character_)
       }
 
@@ -146,8 +146,9 @@ get_pkg_fcn_info <- function(pkg_location) {
   # Nest the `names_fcns_called` column
   fcn_info_tbl <-
     fcn_info_tbl %>%
-    dplyr::group_by(fcn_name, r_file, line_start, line_end, lines, exported, n_pkg_fcns_called) %>%
-    tidyr::nest()
+    dplyr::group_by(fcn_name, r_file, ln_start, ln_end, lines, exported, n_pkg_fcns_called) %>%
+    tidyr::nest() %>%
+    dplyr::rename(pkg_fcns_called = data)
 
   # Set the working directory back to the previous one
   setwd(dir = present_wd)
