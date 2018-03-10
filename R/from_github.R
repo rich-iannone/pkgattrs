@@ -4,18 +4,13 @@
 #' packages that are hosted on GitHub.
 #' @param pkg_location the GitHub repository address
 #' of the following construction: \code{[username]/[repo]}.
+#' @importFrom dplyr tibble mutate
 #' @export
 from_github <- function(repo) {
 
-  # Construct the GitHub URL for the zipball
-  url_str <-
-    paste0("http://github.com/", repo, "/zipball/master")
-
-  # Construct the temp path for the package .zip file
-  temp_path_str <-
-    paste0(getwd(), "/temp_pkgattrs/", repo)
-
-  list(
-    repo = repo,
-    temp_path_str = temp_path_str)
+  # Construct the tibble with the necessary repo information
+  dplyr::tibble(src = "GitHub", repo = repo) %>%
+    dplyr::mutate(url = paste0(
+      "http://github.com/", repo, "/zipball/master")) %>%
+    dplyr::mutate(pkg_path = paste0(getwd(), "/temp_pkgattrs/", repo))
 }
