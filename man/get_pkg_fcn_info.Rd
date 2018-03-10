@@ -4,11 +4,14 @@
 \alias{get_pkg_fcn_info}
 \title{Get a table of info for a package's functions}
 \usage{
-get_pkg_fcn_info(pkg_location)
+get_pkg_fcn_info(...)
 }
 \arguments{
-\item{pkg_location}{the path to the root
-directory of a package.}
+\item{...}{a series of objects pointing to
+package locations. These can be strings with
+paths to local package directories, or,
+invocations of helper functions such as
+\code{from_github()}.}
 }
 \description{
 Create a tibble of information related to each
