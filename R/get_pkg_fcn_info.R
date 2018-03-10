@@ -10,7 +10,7 @@
 #' @importFrom stringr str_detect str_replace str_replace_all
 #' @importFrom stringr str_split_fixed fixed
 #' @importFrom dplyr tibble mutate pull inner_join group_by rename bind_rows
-#' @importFrom purrr map_df
+#' @importFrom purrr map_df flatten_chr
 #' @importFrom tidyr nest
 #' @import downloader
 #' @export
@@ -35,19 +35,19 @@ get_pkg_fcn_info <- function(...) {
   if (length(local_paths) > 0) {
 
     pkg_locations <-
-      bind_rows(
+      dplyr::bind_rows(
         pkg_locations,
         dplyr::tibble(
           src = "local",
           repo = NA_character_,
           url = NA_character_,
-          pkg_path = pkg_location_list[local_paths] %>% flatten_chr()))
+          pkg_path = pkg_location_list[local_paths] %>% purrr::flatten_chr()))
   }
 
   # Add GitHub paths to `pkg_locations`
   if (length(github_paths) > 0) {
     pkg_locations <-
-      bind_rows(
+      dplyr::bind_rows(
         pkg_locations,
         pkg_location_list[github_paths] %>% dplyr::bind_rows())
   }
