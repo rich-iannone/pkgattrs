@@ -26,9 +26,18 @@ fcn_info <-
     from_github("rich-iannone/blastula"))
 ```
 
-The resulting tibble contains a line for every function, which file each is located, starting/ending line numbers, and more.
+The resulting tibble contains the following information in each record:
 
-```{r paged.print=FALSE}
+- the package name (`pkg_name`)
+- the function name (`fcn_name`)
+- the file that contains the function (`r_file`)
+- the line number in `r_file` where the function starts (`ln_start`) and ends (`ln_end`)
+- the number of lines used for the function (`lines`)
+- whether the function is exported or not (`exported`)
+- the number of package functions that are called in `fcn_name` (`n_pkg_fcns_called`)
+- a list column with the names of the package functions called in `fcn_name` (`pkg_fcns_called`)
+
+```{r}
 fcn_info
 ```
 
