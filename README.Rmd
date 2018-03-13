@@ -41,6 +41,18 @@ The resulting tibble contains the following information in each record:
 fcn_info
 ```
 
+The package also supplies functions for visualizing the relationships between a package's functions as a network graph. For example, we could obtain a function information tibble for the **rmarkdown** package, transform that to a graph, and then examine which package functions are associated with the `render()` function
+
+```{r eval=FALSE}
+get_pkg_fcn_info(from_github("rstudio/rmarkdown")) %>%
+  create_function_graph() %>%
+  show_called_functions(caller_fcn = "render")
+```
+
+<img src="man/figures/rmarkdown_render_network_diagram.png">
+
+In this graph, the green nodes show the functions that are exported, and, the relative sizing of nodes is scaled the number of package functions called by each. Each edge represents the relationship `called_in`.
+
 ## Installation
 
 You can install pkgattrs from GitHub with:
