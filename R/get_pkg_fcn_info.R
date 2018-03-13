@@ -9,8 +9,8 @@
 #' \code{from_github()}.
 #' @importFrom stringr str_detect str_replace str_replace_all
 #' @importFrom stringr str_split_fixed fixed
-#' @importFrom dplyr tibble mutate pull inner_join group_by rename bind_rows
-#' @importFrom purrr map_df flatten_chr bind_cols select
+#' @importFrom dplyr tibble mutate pull inner_join group_by rename bind_rows bind_cols select
+#' @importFrom purrr map_df flatten_chr
 #' @importFrom tidyr nest
 #' @import downloader
 #' @export
