@@ -10,7 +10,7 @@
 #' @importFrom stringr str_detect str_replace str_replace_all
 #' @importFrom stringr str_split_fixed fixed
 #' @importFrom dplyr tibble mutate pull inner_join group_by rename bind_rows
-#' @importFrom purrr map_df flatten_chr
+#' @importFrom purrr map_df flatten_chr bind_cols select
 #' @importFrom tidyr nest
 #' @import downloader
 #' @export
@@ -243,5 +243,27 @@ get_pkg_fcn_info <- function(...) {
       fcn_info_tbl
     })
 
-  fcn_info_tbl_all
+  chr_list_col <-
+    1:nrow(fcn_info_tbl_all) %>%
+    purrr::map_df(.f = function(x) {
+
+      if (all(is.na(fcn_info_tbl_all[[x, 9]]))) {
+
+        dplyr::tibble(
+          names_fcns_called = list(
+            names_fcns_called = vector(mode = "character")))
+
+      } else {
+
+        dplyr::tibble(
+          names_fcns_called = list(
+            names_fcns_called = fcn_info_tbl_all[[x, 9]] %>%
+              dplyr::pull(names_fcns_called)))
+      }
+    })
+
+  fcn_info_tbl_all %>%
+    dplyr::bind_cols(chr_list_col) %>%
+    dplyr::select(-pkg_fcns_called) %>%
+    dplyr::rename(pkg_fcns_called = names_fcns_called)
 }
