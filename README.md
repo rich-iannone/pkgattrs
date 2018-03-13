@@ -3,7 +3,7 @@
 pkgattrs
 ========
 
-The goal of pkgattrs is to get information on the contents of an R package. So far, we can obtain a summary of functions available in one or more packages using the `get_pkg_fcn_info()` function. Here is an example where function information is obtained from the `pkgattrs` and `blastula` packages.
+The goal of pkgattrs is to get information on the contents of an R package. So far, we can obtain a summary of functions available in one or more packages using the `get_pkg_fcn_info()` function. Here is an example that gets information about the functions in the `pkgattrs` and `blastula` packages that are hosted on GitHub.
 
 ``` r
 library(pkgattrs)
@@ -31,7 +31,7 @@ fcn_info
 #>    pkg_name fcn_name         r_file         ln_start ln_end lines exported
 #>    <chr>    <chr>            <chr>             <int>  <int> <int> <lgl>   
 #>  1 pkgattrs from_github      from_github.R         9     16     8 T       
-#>  2 pkgattrs get_pkg_fcn_info get_pkg_fcn_i…       17    247   231 T       
+#>  2 pkgattrs get_pkg_fcn_info get_pkg_fcn_i…       17    269   253 T       
 #>  3 pkgattrs are_github_paths utils.R               5     13     9 F       
 #>  4 pkgattrs are_local_paths  utils.R              19     26     8 F       
 #>  5 blastula add_cta_button   add_cta_butto…       43     66    24 T       

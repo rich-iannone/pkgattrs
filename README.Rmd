@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 
 # pkgattrs
 
-The goal of pkgattrs is to get information on the contents of an R package. So far, we can obtain a summary of functions available in one or more packages using the `get_pkg_fcn_info()` function. Here is an example where function information is obtained from the `pkgattrs` and `blastula` packages.
+The goal of pkgattrs is to get information on the contents of an R package. So far, we can obtain a summary of functions available in one or more packages using the `get_pkg_fcn_info()` function. Here is an example that gets information about the functions in the `pkgattrs` and `blastula` packages that are hosted on GitHub.
 
 ```{r}
 library(pkgattrs)
