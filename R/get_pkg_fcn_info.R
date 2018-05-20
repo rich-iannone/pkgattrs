@@ -55,10 +55,11 @@ get_pkg_fcn_info <- function(...) {
   # Get the pkg names
   pkg_locations <-
     pkg_locations %>%
-    dplyr::mutate(pkg_name = stringr::str_replace(
-      string = pkg_path,
-      pattern = ".*\\/(.*)",
-      replacement = "\\1"))
+    dplyr::mutate(
+      pkg_name = stringr::str_replace(
+        string = pkg_path,
+        pattern = ".*\\/(.*)",
+        replacement = "\\1"))
 
   # Get the working directory
   present_wd <- getwd()
@@ -155,10 +156,13 @@ get_pkg_fcn_info <- function(...) {
               pkg_name = pkg_name,
               fcn_name = .,
               r_file = r_files[y]) %>%
-            dplyr::mutate(r_file = stringr::str_replace(
-              string = r_file,
-              pattern = stringr::fixed("./R/"),
-              replacement = "")) %>%
+            dplyr::mutate(
+              r_file_path = r_file) %>%
+            dplyr::mutate(
+              r_file = stringr::str_replace(
+                string = r_file,
+                pattern = stringr::fixed("./R/"),
+                replacement = "")) %>%
             dplyr::mutate(ln_start = line_numbers_start) %>%
             dplyr::mutate(ln_end = line_numbers_end) %>%
             dplyr::mutate(lines = (ln_end - ln_start + 1) %>% as.integer()) %>%
@@ -175,13 +179,12 @@ get_pkg_fcn_info <- function(...) {
         purrr::map_df(.f = function(y) {
 
           fcn_name <- all_fcns[y]
-
           tbl_row <- fcn_info_tbl[y, ]
 
           fcn_lines <-
             readLines(paste0("./R/", fcn_info_tbl[y, 3]))[
-              seq((fcn_info_tbl[y, 4] %>% pull()),
-                  (fcn_info_tbl[y, 5] %>% dplyr::pull()))]
+              seq((fcn_info_tbl[y, 5] %>% pull()),
+                  (fcn_info_tbl[y, 6] %>% dplyr::pull()))]
 
           # Determine whether any pkg functions are called
           any_pkg_function_called <-
@@ -232,7 +235,7 @@ get_pkg_fcn_info <- function(...) {
       fcn_info_tbl <-
         fcn_info_tbl %>%
         dplyr::group_by(
-          pkg_name, fcn_name, r_file, ln_start, ln_end,
+          pkg_name, fcn_name, r_file, r_file_path, ln_start, ln_end,
           lines, exported, n_pkg_fcns_called) %>%
         tidyr::nest() %>%
         dplyr::rename(pkg_fcns_called = data)
@@ -247,7 +250,7 @@ get_pkg_fcn_info <- function(...) {
     1:nrow(fcn_info_tbl_all) %>%
     purrr::map_df(.f = function(x) {
 
-      if (all(is.na(fcn_info_tbl_all[[x, 9]]))) {
+      if (all(is.na(fcn_info_tbl_all[[x, 10]]))) {
 
         dplyr::tibble(
           names_fcns_called = list(
@@ -257,7 +260,7 @@ get_pkg_fcn_info <- function(...) {
 
         dplyr::tibble(
           names_fcns_called = list(
-            names_fcns_called = fcn_info_tbl_all[[x, 9]] %>%
+            names_fcns_called = fcn_info_tbl_all[[x, 10]] %>%
               dplyr::pull(names_fcns_called)))
       }
     })
