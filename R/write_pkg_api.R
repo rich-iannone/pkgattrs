@@ -3,21 +3,22 @@
 #' Exported functions from a package (along with
 #' their arguments and any associated default values)
 #' are printed to a file.
-#' @param filename the output filename for the
-#' text to be written to disk.
 #' @param ... any objects pointing to a package
 #' location. This can be a string with a
 #' path to a local package directory, or, an
 #' invocation of a helper function such as
 #' \code{from_github()}.
+#' @param filename the output filename for the
+#' text to be written to disk.
 #' @importFrom dplyr filter arrange pull tibble mutate case_when
 #' @importFrom purrr map_df
 #' @export
-pkg_api <- function(filename,
-                    ...) {
+write_pkg_api <- function(...,
+                          filename) {
 
   # Create bindings for global variables
-  exported <- fcn_name <- arg_name <- args_defaults <- function_args_defaults <- NULL
+  exported <- fcn_name <- arg_name <- NULL
+  args_defaults <- function_args_defaults <- NULL
 
   # Get API function listing
   exported_fcns <-
