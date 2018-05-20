@@ -2,7 +2,7 @@
 #'
 #' This helper function allows for inspection of R
 #' packages that are hosted on GitHub.
-#' @param pkg_location the GitHub repository address
+#' @param repo the GitHub repository address
 #' of the following construction: \code{[username]/[repo]}.
 #' @importFrom dplyr tibble mutate
 #' @export
