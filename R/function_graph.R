@@ -70,7 +70,7 @@ create_function_graph <- function(pkg_fcn_info,
 #' \code{create_function_graph()} function.
 #' @param caller_fcn the name of the function that is
 #' to examined for its calls of package functions.
-#' @importFrom DiagrammeR select_nodes trav_in transform_to_subgraph_ws render_graph
+#' @importFrom DiagrammeR select_nodes trav_in transform_to_subgraph_ws
 #' @export
 show_called_functions <- function(fcn_graph, caller_fcn) {
 
@@ -79,6 +79,6 @@ show_called_functions <- function(fcn_graph, caller_fcn) {
       DiagrammeR::select_nodes(label == caller_fcn) %>%
       DiagrammeR::trav_in(add_to_selection = TRUE) %>%
       DiagrammeR::transform_to_subgraph_ws() %>%
-      DiagrammeR::render_graph(layout = "nicely")
+      render_graph(layout = "nicely")
   )
 }
