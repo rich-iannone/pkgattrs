@@ -1,15 +1,23 @@
 #' Write the pkg API to disk
-#' @param ... anf objects pointing to a package
-#' locations. This can be a string with a
-#' path to a local package directory, or, an
-#' invocation of a helper functions such as
-#' \code{from_github()}.
+#'
+#' Exported functions from a package (along with
+#' their arguments and any associated default values)
+#' are printed to a file.
 #' @param filename the output filename for the
 #' text to be written to disk.
+#' @param ... any objects pointing to a package
+#' location. This can be a string with a
+#' path to a local package directory, or, an
+#' invocation of a helper function such as
+#' \code{from_github()}.
 #' @importFrom dplyr filter arrange pull tibble mutate case_when
 #' @importFrom purrr map_df
 #' @export
-write_pkg_api <- function(..., filename) {
+pkg_api <- function(filename,
+                    ...) {
+
+  # Create bindings for global variables
+  exported <- fcn_name <- arg_name <- args_defaults <- function_args_defaults <- NULL
 
   # Get API function listing
   exported_fcns <-
