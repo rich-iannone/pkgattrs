@@ -3,6 +3,8 @@
 
 [![Travis build
 status](https://travis-ci.org/rich-iannone/pkgattrs.svg?branch=master)](https://travis-ci.org/rich-iannone/pkgattrs)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/pkgattrs)](https://cran.r-project.org/package=pkgattrs)
 
 # pkgattrs
 
@@ -45,12 +47,12 @@ fcn_info
 #>    pkg_name fcn_name   r_file  r_file_path  ln_start ln_end lines exported
 #>    <chr>    <chr>      <chr>   <chr>           <int>  <int> <int> <lgl>   
 #>  1 pkgattrs from_gith… from_g… ./R/from_gi…        9     16     8 TRUE    
-#>  2 pkgattrs create_fu… functi… ./R/functio…       17     62    46 TRUE    
-#>  3 pkgattrs show_call… functi… ./R/functio…       75     84    10 TRUE    
-#>  4 pkgattrs get_pkg_f… get_pk… ./R/get_pkg…       17    272   256 TRUE    
+#>  2 pkgattrs create_fu… functi… ./R/functio…       17     66    50 TRUE    
+#>  3 pkgattrs show_call… functi… ./R/functio…       80     92    13 TRUE    
+#>  4 pkgattrs get_pkg_f… get_pk… ./R/get_pkg…       17    278   262 TRUE    
 #>  5 pkgattrs are_githu… utils.R ./R/utils.R         5     13     9 FALSE   
 #>  6 pkgattrs are_local… utils.R ./R/utils.R        19     26     8 FALSE   
-#>  7 pkgattrs write_pkg… write_… ./R/write_p…       12     68    57 TRUE    
+#>  7 pkgattrs write_pkg… write_… ./R/write_p…       16     77    62 TRUE    
 #>  8 blastula add_cta_b… add_ct… ./R/add_cta…       43     66    24 TRUE    
 #>  9 blastula add_ggplot add_gg… ./R/add_ggp…       52     71    20 TRUE    
 #> 10 blastula add_image  add_im… ./R/add_ima…       40     45     6 TRUE    
@@ -107,9 +109,9 @@ package), we can generate a file that lists the exported functions along
 with each of the function arguments and default values.
 
 ``` r
-pkg_api(
-  filename = "API",
-  getwd())
+write_pkg_api(
+  getwd(),
+  filename = "API")
 ```
 
 This example generates the following text in the `API` file:
@@ -117,8 +119,8 @@ This example generates the following text in the `API` file:
     create_function_graph(pkg_fcn_info, pkg_name)
     from_github(repo)
     get_pkg_fcn_info(...)
-    pkg_api(filename, ...)
     show_called_functions(fcn_graph, caller_fcn)
+    write_pkg_api(..., filename)
 
 ## Installation
 
