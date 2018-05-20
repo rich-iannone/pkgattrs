@@ -13,6 +13,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+[![Travis build status](https://travis-ci.org/rich-iannone/pkgattrs.svg?branch=master)](https://travis-ci.org/rich-iannone/pkgattrs)
+
 # pkgattrs
 
 The **pkgattrs** package is useful for getting information on the contents of any R package. One of the things that can be done is generating a summary of functions available in one or more packages. We can conveniently do this using the `get_pkg_fcn_info()` function. Here is an example where we can create an informative table of the functions in the `pkgattrs` and `blastula` packages (hosted on GitHub).

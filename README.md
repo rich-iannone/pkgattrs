@@ -1,6 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![Travis build
+status](https://travis-ci.org/rich-iannone/pkgattrs.svg?branch=master)](https://travis-ci.org/rich-iannone/pkgattrs)
+
 # pkgattrs
 
 The **pkgattrs** package is useful for getting information on the
@@ -44,7 +47,7 @@ fcn_info
 #>  1 pkgattrs from_gith… from_g… ./R/from_gi…        9     16     8 TRUE    
 #>  2 pkgattrs create_fu… functi… ./R/functio…       17     62    46 TRUE    
 #>  3 pkgattrs show_call… functi… ./R/functio…       75     84    10 TRUE    
-#>  4 pkgattrs get_pkg_f… get_pk… ./R/get_pkg…       17    269   253 TRUE    
+#>  4 pkgattrs get_pkg_f… get_pk… ./R/get_pkg…       17    272   256 TRUE    
 #>  5 pkgattrs are_githu… utils.R ./R/utils.R         5     13     9 FALSE   
 #>  6 pkgattrs are_local… utils.R ./R/utils.R        19     26     8 FALSE   
 #>  7 pkgattrs write_pkg… write_… ./R/write_p…       12     68    57 TRUE    
