@@ -17,6 +17,10 @@
 create_function_graph <- function(pkg_fcn_info,
                                   pkg_name = NULL) {
 
+  # Create bindings for global variables
+  pkg_fcns_called <- fcn_name <- r_file <- exported <- NULL
+  n_pkg_fcns_called <- tooltip <- from <- to <- label <- width <- NULL
+
   if (!is.null(pkg_name)) {
 
     pkg_fcn_info <-
@@ -71,14 +75,18 @@ create_function_graph <- function(pkg_fcn_info,
 #' @param caller_fcn the name of the function that is
 #' to examined for its calls of package functions.
 #' @importFrom DiagrammeR select_nodes trav_in transform_to_subgraph_ws
+#' @importFrom DiagrammeR render_graph
 #' @export
 show_called_functions <- function(fcn_graph, caller_fcn) {
+
+  # Create binding for global variable
+  label <- NULL
 
   suppressMessages(
     fcn_graph %>%
       DiagrammeR::select_nodes(label == caller_fcn) %>%
       DiagrammeR::trav_in(add_to_selection = TRUE) %>%
       DiagrammeR::transform_to_subgraph_ws() %>%
-      render_graph(layout = "nicely")
+      DiagrammeR::render_graph(layout = "nicely")
   )
 }

@@ -16,6 +16,11 @@
 #' @export
 get_pkg_fcn_info <- function(...) {
 
+  # Create bindings for global variables
+  pkg_path <- r_file <- ln_start <- ln_end <- fcn_name <- NULL
+  pkg_fcns_called <- names_fcns_called <- r_file_path <- NULL
+  lines <- exported <- n_pkg_fcns_called <- data <- NULL
+
   pkg_location_list <- list(...)
 
   github_paths <-
@@ -150,12 +155,14 @@ get_pkg_fcn_info <- function(...) {
           line_numbers_start <- which(function_def_lines)
           line_numbers_end <- which(function_end_lines)
 
-          (file_lines[function_def_lines] %>%
-              stringr::str_split_fixed(pattern = " ", 2))[, 1] %>%
-            dplyr::tibble(
-              pkg_name = pkg_name,
-              fcn_name = .,
-              r_file = r_files[y]) %>%
+          fcn_name <-
+            (file_lines[function_def_lines] %>%
+               stringr::str_split_fixed(pattern = " ", 2))[, 1]
+
+          dplyr::tibble(
+            pkg_name = pkg_name,
+            fcn_name = fcn_name,
+            r_file = r_files[y]) %>%
             dplyr::mutate(
               r_file_path = r_file) %>%
             dplyr::mutate(
@@ -173,7 +180,6 @@ get_pkg_fcn_info <- function(...) {
       # Get a vector of all package functions
       all_fcns <- fcn_info_tbl %>% pull(fcn_name)
 
-
       fcn_info_tbl <-
         seq(all_fcns) %>%
         purrr::map_df(.f = function(y) {
@@ -183,7 +189,7 @@ get_pkg_fcn_info <- function(...) {
 
           fcn_lines <-
             readLines(paste0("./R/", fcn_info_tbl[y, 3]))[
-              seq((fcn_info_tbl[y, 5] %>% pull()),
+              seq((fcn_info_tbl[y, 5] %>% dplyr::pull()),
                   (fcn_info_tbl[y, 6] %>% dplyr::pull()))]
 
           # Determine whether any pkg functions are called
