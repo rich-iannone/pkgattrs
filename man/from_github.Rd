@@ -7,7 +7,7 @@
 from_github(repo)
 }
 \arguments{
-\item{pkg_location}{the GitHub repository address
+\item{repo}{the GitHub repository address
 of the following construction: \code{[username]/[repo]}.}
 }
 \description{
