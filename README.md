@@ -107,9 +107,9 @@ package), we can generate a file that lists the exported functions along
 with each of the function arguments and default values.
 
 ``` r
-write_pkg_api(
-  from_github("rich-iannone/pkgattrs"),
-  filename = "API")
+pkg_api(
+  filename = "API",
+  getwd())
 ```
 
 This example generates the following text in the `API` file:
@@ -117,8 +117,8 @@ This example generates the following text in the `API` file:
     create_function_graph(pkg_fcn_info, pkg_name)
     from_github(repo)
     get_pkg_fcn_info(...)
+    pkg_api(filename, ...)
     show_called_functions(fcn_graph, caller_fcn)
-    write_pkg_api(..., filename)
 
 ## Installation
 
