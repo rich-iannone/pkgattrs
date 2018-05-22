@@ -16,6 +16,9 @@
 #' @export
 get_fcn_lines_info <- function(..., .make_clean = TRUE) {
 
+  # Create bindings for global variables
+  ln <- type <- subtype <- ln_content <- NULL
+
   fcn_df <- get_pkg_fcn_info(..., .make_clean = FALSE)
 
   fcn_lines_tbl <-
