@@ -3,6 +3,7 @@
 export("%>%")
 export(create_function_graph)
 export(from_github)
+export(get_fcn_lines_info)
 export(get_pkg_fcn_info)
 export(render_graph)
 export(show_called_functions)
