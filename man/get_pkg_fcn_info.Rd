@@ -2,9 +2,9 @@
 % Please edit documentation in R/get_pkg_fcn_info.R
 \name{get_pkg_fcn_info}
 \alias{get_pkg_fcn_info}
-\title{Get a table of info for a package's functions}
+\title{Get a table of info of package fcns}
 \usage{
-get_pkg_fcn_info(...)
+get_pkg_fcn_info(..., .make_clean = TRUE)
 }
 \arguments{
 \item{...}{a series of objects pointing to
@@ -12,6 +12,10 @@ package locations. These can be strings with
 paths to local package directories, or,
 invocations of helper functions such as
 \code{from_github()}.}
+
+\item{.make_clean}{an option to clean the
+working directory of any temporary package files
+downloaded from GitHub.}
 }
 \description{
 Create a tibble of information related to each
