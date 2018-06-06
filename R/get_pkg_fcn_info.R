@@ -269,6 +269,14 @@ get_pkg_fcn_info <- function(...,
         tidyr::nest() %>%
         dplyr::rename(pkg_fcns_called = data)
 
+      # Join the cyclocomp data to the table
+      fcn_info_tbl <-
+        fcn_info_tbl %>%
+        dplyr::left_join(cc_df, by = c("fcn_name" = "name")) %>%
+        dplyr::select(
+          pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
+          ln_start, ln_end, lines, cyclocomp, everything())
+
       # Set the working directory back to the previous one
       setwd(dir = present_wd)
 
