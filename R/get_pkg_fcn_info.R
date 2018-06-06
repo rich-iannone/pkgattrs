@@ -120,6 +120,11 @@ get_pkg_fcn_info <- function(...,
       # to the package location
       setwd(dir = pkg_path)
 
+      # Get the cyclomatic complexity of each function
+      cc_df <-
+        cyclocomp::cyclocomp_package_dir(getwd()) %>%
+        dplyr::as_tibble()
+
       # Get a list of all .R files in the `./R` folder
       r_files <-
         list.files(
