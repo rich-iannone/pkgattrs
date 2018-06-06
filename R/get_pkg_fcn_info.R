@@ -12,10 +12,11 @@
 #' downloaded from GitHub.
 #' @importFrom stringr str_detect str_replace str_replace_all
 #' @importFrom stringr str_split_fixed fixed
-#' @importFrom dplyr tibble mutate pull inner_join group_by
-#' @importFrom dplyr rename bind_rows bind_cols select
+#' @importFrom dplyr tibble mutate pull inner_join group_by left_join
+#' @importFrom dplyr rename bind_rows bind_cols select everything as_tibble
 #' @importFrom purrr map_df flatten_chr
 #' @importFrom tidyr nest
+#' @importFrom cyclocomp cyclocomp_package_dir
 #' @import downloader
 #' @export
 get_pkg_fcn_info <- function(...,
