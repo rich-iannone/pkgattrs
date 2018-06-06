@@ -42,7 +42,7 @@ The resulting tibble contains the following information in each record:
 - the number of lines in the function used for code (`code`), for comments (`comment`), and for roxygen statements (`roxygen`), and, the `fcn_lines` lines that are blank (`blank`): the sum of all these is given in `total_lines`
 - the cyclomatic complexity of the function (`cyclocomp`)
 - the name of the package repository, if it was obtained from one (`pkg_repo`)
-- the name of the package path, if it a locally-available package (`pkg_path`)
+- the name of the package path, if it was a locally-available package (`pkg_path`)
 - the number of package functions that are called in `fcn_name` (`n_pkg_fcns_called`)
 - a list column with the names of the package functions called in `fcn_name` (`pkg_fcns_called`)
 

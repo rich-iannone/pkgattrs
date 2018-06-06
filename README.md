@@ -46,7 +46,7 @@ The resulting tibble contains the following information in each record:
   - the cyclomatic complexity of the function (`cyclocomp`)
   - the name of the package repository, if it was obtained from one
     (`pkg_repo`)
-  - the name of the package path, if it a locally-available package
+  - the name of the package path, if it was a locally-available package
     (`pkg_path`)
   - the number of package functions that are called in `fcn_name`
     (`n_pkg_fcns_called`)
