@@ -13,13 +13,13 @@ paths to local package directories, or,
 invocations of helper functions such as
 \code{from_github()}.}
 
+\item{.fcn_info_tbl}{an optional tibble of
+function information obtained from the
+\code{get_pk_fcn_info()} function.}
+
 \item{.make_clean}{an option to clean the
 working directory of any temporary package files
 downloaded from GitHub.}
-
-\item{.fcn_info_df}{an optional tibble of
-function information obtained from the
-\code{get_pk_fcn_info()} function.}
 }
 \description{
 Create a tibble of information related to each
