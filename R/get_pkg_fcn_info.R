@@ -13,9 +13,10 @@
 #' @importFrom stringr str_detect str_replace str_replace_all
 #' @importFrom stringr str_split_fixed fixed
 #' @importFrom dplyr tibble mutate pull inner_join group_by left_join
-#' @importFrom dplyr rename bind_rows bind_cols select everything as_tibble
+#' @importFrom dplyr rename bind_rows bind_cols select everything
+#' @importFrom dplyr as_tibble summarize n group_by ungroup
 #' @importFrom purrr map_df flatten_chr
-#' @importFrom tidyr nest
+#' @importFrom tidyr nest spread
 #' @importFrom cyclocomp cyclocomp_package_dir
 #' @import downloader
 #' @export
@@ -267,7 +268,8 @@ get_pkg_fcn_info <- function(...,
           pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
           ln_start, ln_end, lines, pkg_repo, pkg_path, n_pkg_fcns_called) %>%
         tidyr::nest() %>%
-        dplyr::rename(pkg_fcns_called = data)
+        dplyr::rename(pkg_fcns_called = data) %>%
+        dplyr::rename(fcn_lines = lines)
 
       # Join the cyclocomp data to the table
       fcn_info_tbl <-
@@ -275,7 +277,30 @@ get_pkg_fcn_info <- function(...,
         dplyr::left_join(cc_df, by = c("fcn_name" = "name")) %>%
         dplyr::select(
           pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
-          ln_start, ln_end, lines, cyclocomp, everything())
+          ln_start, ln_end, fcn_lines, cyclocomp, everything())
+
+      # Get the function lines table
+      fcn_lines_tbl <-
+        get_fcn_lines_info(
+          getwd(),
+          .fcn_info_tbl = fcn_info_tbl,
+          .make_clean = FALSE) %>%
+        dplyr::group_by(fcn_name, subtype) %>%
+        dplyr::summarize(lines = n()) %>%
+        dplyr::ungroup() %>%
+        tidyr::spread(key = subtype, value = lines, fill = 0) %>%
+        dplyr::mutate(total_lines = blank + code + comment + roxygen) %>%
+        dplyr::select(fcn_name, code, comment, blank, roxygen, total_lines)
+
+      # Get the function line-type data to the table
+      fcn_info_tbl <-
+        fcn_lines_tbl %>%
+        dplyr::left_join(fcn_info_tbl, by = "fcn_name") %>%
+        dplyr::select(
+          pkg_name, pkg_src, fcn_name, exported,
+          r_file, r_file_path, ln_start, ln_end,
+          fcn_lines, code, comment, blank,
+          roxygen, total_lines, everything())
 
       # Set the working directory back to the previous one
       setwd(dir = present_wd)
@@ -298,7 +323,7 @@ get_pkg_fcn_info <- function(...,
     1:nrow(fcn_info_tbl_all) %>%
     purrr::map_df(.f = function(x) {
 
-      if (all(is.na(fcn_info_tbl_all[[x, 14]]))) {
+      if (all(is.na(fcn_info_tbl_all[[x, 19]]))) {
 
         dplyr::tibble(
           names_fcns_called = list(
@@ -308,7 +333,7 @@ get_pkg_fcn_info <- function(...,
 
         dplyr::tibble(
           names_fcns_called = list(
-            names_fcns_called = fcn_info_tbl_all[[x, 14]] %>%
+            names_fcns_called = fcn_info_tbl_all[[x, 19]] %>%
               dplyr::pull(names_fcns_called)))
       }
     })
