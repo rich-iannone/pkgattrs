@@ -7,7 +7,7 @@
 #' paths to local package directories, or,
 #' invocations of helper functions such as
 #' \code{from_github()}.
-#' @param .fcn_info_df an optional tibble of
+#' @param .fcn_info_tbl an optional tibble of
 #' function information obtained from the
 #' \code{get_pk_fcn_info()} function.
 #' @param .make_clean an option to clean the
