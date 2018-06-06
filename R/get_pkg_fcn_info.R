@@ -27,6 +27,8 @@ get_pkg_fcn_info <- function(...,
   pkg_path <- r_file <- ln_start <- ln_end <- fcn_name <- NULL
   pkg_fcns_called <- names_fcns_called <- r_file_path <- NULL
   lines <- exported <- n_pkg_fcns_called <- data <- NULL
+  fcn_lines <- cyclocomp <- subtype <- blank <- NULL
+  code <- roxygen <- total_lines <- NULL
 
   pkg_location_list <- list(...)
 
