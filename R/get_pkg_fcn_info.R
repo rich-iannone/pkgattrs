@@ -298,7 +298,7 @@ get_pkg_fcn_info <- function(...,
     1:nrow(fcn_info_tbl_all) %>%
     purrr::map_df(.f = function(x) {
 
-      if (all(is.na(fcn_info_tbl_all[[x, 13]]))) {
+      if (all(is.na(fcn_info_tbl_all[[x, 14]]))) {
 
         dplyr::tibble(
           names_fcns_called = list(
@@ -308,7 +308,7 @@ get_pkg_fcn_info <- function(...,
 
         dplyr::tibble(
           names_fcns_called = list(
-            names_fcns_called = fcn_info_tbl_all[[x, 13]] %>%
+            names_fcns_called = fcn_info_tbl_all[[x, 14]] %>%
               dplyr::pull(names_fcns_called)))
       }
     })
