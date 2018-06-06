@@ -4,7 +4,7 @@
 \alias{get_fcn_lines_info}
 \title{Get a table with a line-by-line info of package fcns}
 \usage{
-get_fcn_lines_info(..., .make_clean = TRUE)
+get_fcn_lines_info(..., .fcn_info_tbl = NULL, .make_clean = TRUE)
 }
 \arguments{
 \item{...}{a series of objects pointing to
@@ -16,6 +16,10 @@ invocations of helper functions such as
 \item{.make_clean}{an option to clean the
 working directory of any temporary package files
 downloaded from GitHub.}
+
+\item{.fcn_info_df}{an optional tibble of
+function information obtained from the
+\code{get_pk_fcn_info()} function.}
 }
 \description{
 Create a tibble of information related to each
