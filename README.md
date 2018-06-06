@@ -22,18 +22,32 @@ fcn_info <-
   get_pkg_fcn_info(
     from_github("rich-iannone/pkgattrs"),
     from_github("rich-iannone/blastula"))
+#> Skipping 1 packages ahead of CRAN: glue
+#> Installing 2 packages: pillar, utf8
+#> Skipping 1 packages ahead of CRAN: glue
+#> Installing 2 packages: pillar, utf8
 ```
 
 The resulting tibble contains the following information in each record:
 
   - the package name (`pkg_name`)
+  - the package source location (`pkg_src`)
   - the function name (`fcn_name`)
+  - whether the function is exported or not (`exported`)
   - the file that contains the function (`r_file`)
   - the relative path from pkg root to `r_file` (`r_file_path`)
   - the line number in `r_file` where the function starts (`ln_start`)
     and ends (`ln_end`)
-  - the number of lines used for the function (`lines`)
-  - whether the function is exported or not (`exported`)
+  - the number of lines used for the function (`fcn_lines`)
+  - the number of lines in the function used for code (`code`), for
+    comments (`comment`), and for roxygen statements (`roxygen`), and,
+    the `fcn_lines` lines that are blank (`blank`): the sum of all these
+    is given in `total_lines`
+  - the cyclomatic complexity of the function (`cyclocomp`)
+  - the name of the package repository, if it was obtained from one
+    (`pkg_repo`)
+  - the name of the package path, if it a locally-available package
+    (`pkg_path`)
   - the number of package functions that are called in `fcn_name`
     (`n_pkg_fcns_called`)
   - a list column with the names of the package functions called in
@@ -43,31 +57,23 @@ The resulting tibble contains the following information in each record:
 
 ``` r
 fcn_info
-#> # A tibble: 20 x 10
-#>    pkg_name fcn_name   r_file  r_file_path  ln_start ln_end lines exported
-#>    <chr>    <chr>      <chr>   <chr>           <int>  <int> <int> <lgl>   
-#>  1 pkgattrs from_gith… from_g… ./R/from_gi…        9     16     8 TRUE    
-#>  2 pkgattrs create_fu… functi… ./R/functio…       17     66    50 TRUE    
-#>  3 pkgattrs show_call… functi… ./R/functio…       80     92    13 TRUE    
-#>  4 pkgattrs get_pkg_f… get_pk… ./R/get_pkg…       17    278   262 TRUE    
-#>  5 pkgattrs are_githu… utils.R ./R/utils.R         5     13     9 FALSE   
-#>  6 pkgattrs are_local… utils.R ./R/utils.R        19     26     8 FALSE   
-#>  7 pkgattrs write_pkg… write_… ./R/write_p…       16     77    62 TRUE    
-#>  8 blastula add_cta_b… add_ct… ./R/add_cta…       43     66    24 TRUE    
-#>  9 blastula add_ggplot add_gg… ./R/add_ggp…       52     71    20 TRUE    
-#> 10 blastula add_image  add_im… ./R/add_ima…       40     45     6 TRUE    
-#> 11 blastula add_reada… add_re… ./R/add_rea…       24     64    41 TRUE    
-#> 12 blastula blast_fir… blast_… ./R/blast_f…        9     52    44 TRUE    
-#> 13 blastula compose_e… compos… ./R/compose…       86    275   190 TRUE    
-#> 14 blastula create_em… create… ./R/create_…       47    123    77 TRUE    
-#> 15 blastula get_html_… get_ht… ./R/get_htm…       13     16     4 TRUE    
-#> 16 blastula prepare_t… prepar… ./R/prepare…       31     75    45 TRUE    
-#> 17 blastula preview_e… previe… ./R/preview…        8     11     4 TRUE    
-#> 18 blastula send_by_m… send_b… ./R/send_by…       56     88    33 TRUE    
-#> 19 blastula send_emai… send_e… ./R/send_em…       88    305   218 TRUE    
-#> 20 blastula smtp_sett… utils.R ./R/utils.R         2     27    26 FALSE   
-#> # ... with 2 more variables: n_pkg_fcns_called <int>,
-#> #   pkg_fcns_called <list>
+#> # A tibble: 21 x 19
+#>    pkg_name pkg_src fcn_name  exported r_file  r_file_path ln_start ln_end
+#>    <chr>    <chr>   <chr>     <lgl>    <chr>   <chr>          <int>  <int>
+#>  1 pkgattrs GitHub  are_gith… FALSE    utils.R ./R/utils.R        5     13
+#>  2 pkgattrs GitHub  are_loca… FALSE    utils.R ./R/utils.R       19     26
+#>  3 pkgattrs GitHub  create_f… TRUE     functi… ./R/functi…       17     66
+#>  4 pkgattrs GitHub  from_git… TRUE     from_g… ./R/from_g…        9     16
+#>  5 pkgattrs GitHub  get_fcn_… TRUE     get_fc… ./R/get_fc…       20    145
+#>  6 pkgattrs GitHub  get_pkg_… TRUE     get_pk… ./R/get_pk…       23    347
+#>  7 pkgattrs GitHub  show_cal… TRUE     functi… ./R/functi…       80     92
+#>  8 pkgattrs GitHub  write_pk… TRUE     write_… ./R/write_…       16     77
+#>  9 blastula GitHub  add_cta_… TRUE     add_ct… ./R/add_ct…       43     66
+#> 10 blastula GitHub  add_ggpl… TRUE     add_gg… ./R/add_gg…       52     71
+#> # ... with 11 more rows, and 11 more variables: fcn_lines <int>,
+#> #   code <dbl>, comment <dbl>, blank <dbl>, roxygen <dbl>,
+#> #   total_lines <dbl>, cyclocomp <int>, pkg_repo <chr>, pkg_path <chr>,
+#> #   n_pkg_fcns_called <int>, pkg_fcns_called <list>
 ```
 
 The package also supplies functions for visualizing the relationships
