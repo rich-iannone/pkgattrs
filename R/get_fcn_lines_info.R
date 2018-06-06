@@ -7,6 +7,9 @@
 #' paths to local package directories, or,
 #' invocations of helper functions such as
 #' \code{from_github()}.
+#' @param .fcn_info_df an optional tibble of
+#' function information obtained from the
+#' \code{get_pk_fcn_info()} function.
 #' @param .make_clean an option to clean the
 #' working directory of any temporary package files
 #' downloaded from GitHub.
@@ -14,12 +17,18 @@
 #' @importFrom dplyr pull tibble bind_rows mutate case_when select
 #' @importFrom stringr str_detect
 #' @export
-get_fcn_lines_info <- function(..., .make_clean = TRUE) {
+get_fcn_lines_info <- function(...,
+                               .fcn_info_tbl = NULL,
+                               .make_clean = TRUE) {
 
   # Create bindings for global variables
   ln <- type <- subtype <- ln_content <- NULL
 
-  fcn_df <- get_pkg_fcn_info(..., .make_clean = FALSE)
+  if (!is.null(.fcn_info_tbl)) {
+    fcn_df <- .fcn_info_tbl
+  } else {
+    fcn_df <- get_pkg_fcn_info(..., .make_clean = FALSE)
+  }
 
   fcn_lines_tbl <-
     seq(nrow(fcn_df)) %>%
@@ -121,7 +130,7 @@ get_fcn_lines_info <- function(..., .make_clean = TRUE) {
         dplyr::select(pkg_name, pkg_src, fcn_name, ln, type, subtype, ln_content)
     })
 
-  if (.make_clean) {
+  if (is.null(.fcn_info_tbl) && .make_clean) {
 
     # Remove temporary directory
     if (dir.exists("./temp_pkgattrs")) {
