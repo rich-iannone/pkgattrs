@@ -1,0 +1,6 @@
+create_function_graph(pkg_fcn_info, pkg_name = NULL)
+from_github(repo)
+get_fcn_lines_info(..., .fcn_info_tbl = NULL, .make_clean = TRUE)
+get_pkg_fcn_info(..., .make_clean = TRUE)
+show_called_functions(fcn_graph, caller_fcn)
+write_pkg_api(..., filename)
