@@ -1,34 +1,16 @@
 #' Get a table of info of package fcns
 #'
-#' Create a tibble of information related to each
-#' function available in a package.
-#' @param ... a series of objects pointing to
-#' package locations. These can be strings with
-#' paths to local package directories, or,
-#' invocations of helper functions such as
-#' \code{from_github()}.
-#' @param .make_clean an option to clean the
-#' working directory of any temporary package files
-#' downloaded from GitHub.
-#' @importFrom stringr str_detect str_replace str_replace_all
-#' @importFrom stringr str_split_fixed fixed
-#' @importFrom dplyr tibble mutate pull inner_join group_by left_join
-#' @importFrom dplyr rename bind_rows bind_cols select everything
-#' @importFrom dplyr as_tibble summarize n group_by ungroup
-#' @importFrom purrr map_df flatten_chr
-#' @importFrom tidyr nest spread
-#' @importFrom cyclocomp cyclocomp_package_dir
-#' @import downloader
+#' Create a tibble of information related to each function available in a
+#' package.
+#' @param ... a series of objects pointing to package locations. These can be
+#'   strings with paths to local package directories, or, invocations of helper
+#'   functions such as \code{from_github()}.
+#' @param .make_clean an option to clean the working directory of any temporary
+#'   package files downloaded from GitHub.
 #' @export
-get_pkg_fcn_info <- function(...,
-                             .make_clean = TRUE) {
-
-  # Create bindings for global variables
-  pkg_path <- r_file <- ln_start <- ln_end <- fcn_name <- NULL
-  pkg_fcns_called <- names_fcns_called <- r_file_path <- NULL
-  lines <- exported <- n_pkg_fcns_called <- data <- NULL
-  fcn_lines <- cyclocomp <- subtype <- blank <- NULL
-  code <- roxygen <- total_lines <- NULL
+pkgattrs <- function(...,
+                     .make_clean = TRUE,
+                     .get_cyclocomp = FALSE) {
 
   pkg_location_list <- list(...)
 
@@ -43,7 +25,8 @@ get_pkg_fcn_info <- function(...,
       src = NA_character_,
       repo = NA_character_,
       url = NA_character_,
-      pkg_path = NA_character_)[-1, ]
+      pkg_path = NA_character_
+    )[-1, ]
 
   # Add local paths to `pkg_locations`
   if (length(local_paths) > 0) {
@@ -63,7 +46,9 @@ get_pkg_fcn_info <- function(...,
     pkg_locations <-
       dplyr::bind_rows(
         pkg_locations,
-        pkg_location_list[github_paths] %>% dplyr::bind_rows())
+        pkg_location_list[github_paths] %>%
+          dplyr::bind_rows()
+      )
   }
 
   # Get the pkg names
@@ -160,7 +145,7 @@ get_pkg_fcn_info <- function(...,
           function_def_lines <-
             file_lines %>%
             stringr::str_detect(
-              pattern = "^[a-zA-Z0-9_\\.].* <- function\\(")
+              pattern = "^[`a-zA-Z0-9_\\.].* <- function\\(")
 
           # Detect those lines where a function ends
           function_end_lines <-
@@ -268,25 +253,31 @@ get_pkg_fcn_info <- function(...,
         fcn_info_tbl %>%
         dplyr::group_by(
           pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
-          ln_start, ln_end, lines, pkg_repo, pkg_path, n_pkg_fcns_called) %>%
+          ln_start, ln_end, lines, pkg_repo, pkg_path, n_pkg_fcns_called
+        ) %>%
         tidyr::nest() %>%
         dplyr::rename(pkg_fcns_called = data) %>%
         dplyr::rename(fcn_lines = lines)
 
-      # Join the cyclocomp data to the table
-      fcn_info_tbl <-
-        fcn_info_tbl %>%
-        dplyr::left_join(cc_df, by = c("fcn_name" = "name")) %>%
-        dplyr::select(
-          pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
-          ln_start, ln_end, fcn_lines, cyclocomp, everything())
+      if (.get_cyclocomp) {
+
+        # Join the cyclocomp data to the table
+        fcn_info_tbl <-
+          fcn_info_tbl %>%
+          dplyr::left_join(cc_df, by = c("fcn_name" = "name")) %>%
+          dplyr::select(
+            pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
+            ln_start, ln_end, fcn_lines, cyclocomp, dplyr::everything()
+          )
+      }
 
       # Get the function lines table
       fcn_lines_tbl <-
         get_fcn_lines_info(
           getwd(),
           .fcn_info_tbl = fcn_info_tbl,
-          .make_clean = FALSE) %>%
+          .make_clean = FALSE
+        ) %>%
         dplyr::group_by(fcn_name, subtype) %>%
         dplyr::summarize(lines = n()) %>%
         dplyr::ungroup() %>%
@@ -302,7 +293,7 @@ get_pkg_fcn_info <- function(...,
           pkg_name, pkg_src, fcn_name, exported,
           r_file, r_file_path, ln_start, ln_end,
           fcn_lines, code, comment, blank,
-          roxygen, total_lines, everything())
+          roxygen, total_lines, dplyr::everything())
 
       # Set the working directory back to the previous one
       setwd(dir = present_wd)
@@ -322,21 +313,25 @@ get_pkg_fcn_info <- function(...,
     })
 
   chr_list_col <-
-    1:nrow(fcn_info_tbl_all) %>%
+    seq(nrow(fcn_info_tbl_all)) %>%
     purrr::map_df(.f = function(x) {
 
-      if (all(is.na(fcn_info_tbl_all[[x, 19]]))) {
+      if (all(is.na(fcn_info_tbl_all$pkg_fcns_called))) {
 
         dplyr::tibble(
           names_fcns_called = list(
-            names_fcns_called = vector(mode = "character")))
+            names_fcns_called = vector(mode = "character")
+          )
+        )
 
       } else {
 
         dplyr::tibble(
           names_fcns_called = list(
-            names_fcns_called = fcn_info_tbl_all[[x, 19]] %>%
-              dplyr::pull(names_fcns_called)))
+            names_fcns_called = fcn_info_tbl_all[[x, "pkg_fcns_called"]] %>%
+              dplyr::pull(names_fcns_called)
+          )
+        )
       }
     })
 
