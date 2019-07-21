@@ -1,0 +1,23 @@
+utils::globalVariables(
+  c(
+    "pkg_path",
+    "r_file",
+    "ln_start",
+    "ln_end",
+    "fcn_name",
+    "pkg_fcns_called",
+    "names_fcns_called",
+    "r_file_path",
+    "lines",
+    "exported",
+    "n_pkg_fcns_called",
+    "data",
+    "fcn_lines",
+    "cyclocomp",
+    "subtype",
+    "blank",
+    "code",
+    "roxygen",
+    "total_lines"
+  )
+)
