@@ -12,7 +12,7 @@ BugReports: https://github.com/rich-iannone/pkgattrs/issues
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Depends: 
     R (>= 3.1.2)
 Imports: 
