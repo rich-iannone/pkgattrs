@@ -169,7 +169,8 @@ pkgattrs <- function(...,
 
           fcn_name <-
             (file_lines[function_def_lines] %>%
-               stringr::str_split_fixed(pattern = " ", 2))[, 1]
+               stringr::str_split_fixed(pattern = " ", 2)
+            )[, 1]
 
           fcn_info_tbl <-
             dplyr::tibble(
@@ -197,7 +198,8 @@ pkgattrs <- function(...,
             ) %>%
             dplyr::select(
               pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
-              ln_start, ln_end, lines, pkg_repo, pkg_path)
+              ln_start, ln_end, lines, pkg_repo, pkg_path
+            )
 
           fcn_info_tbl
         })
@@ -307,7 +309,8 @@ pkgattrs <- function(...,
           pkg_name, pkg_src, fcn_name, exported,
           r_file, r_file_path, ln_start, ln_end,
           fcn_lines, code, comment, blank,
-          roxygen, total_lines, dplyr::everything())
+          roxygen, total_lines, dplyr::everything()
+        )
 
       # Set the working directory back to the previous one
       setwd(dir = present_wd)
