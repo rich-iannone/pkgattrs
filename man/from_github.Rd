@@ -7,10 +7,10 @@
 from_github(repo)
 }
 \arguments{
-\item{repo}{the GitHub repository address
-of the following construction: \code{[username]/[repo]}.}
+\item{repo}{The GitHub repository address of the following construction:
+\code{[username]/[repo]}.}
 }
 \description{
-This helper function allows for inspection of R
-packages that are hosted on GitHub.
+This helper function allows for inspection of R packages that are hosted on
+GitHub.
 }
