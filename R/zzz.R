@@ -14,6 +14,8 @@ utils::globalVariables(
     "fcn_name",
     "label",
     "lines",
+    "ln",
+    "ln_content",
     "ln_start",
     "ln_end",
     "n_pkg_fcns_called",
@@ -26,6 +28,7 @@ utils::globalVariables(
     "to",
     "tooltip",
     "total_lines",
+    "type",
     "width"
   )
 )
