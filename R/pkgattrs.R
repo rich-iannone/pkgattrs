@@ -145,7 +145,8 @@ pkgattrs <- function(...,
           function_def_lines <-
             file_lines %>%
             stringr::str_detect(
-              pattern = "^[`a-zA-Z0-9_\\.].* <- function\\(")
+              pattern = "^[`a-zA-Z0-9_\\.].*\\s*?(<-|=)\\s*?function\\("
+            )
 
           # Detect those lines where a function ends
           function_end_lines <-
