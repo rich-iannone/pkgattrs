@@ -2,11 +2,13 @@
 #'
 #' Create a tibble of information related to each function available in a
 #' package.
-#' @param ... a series of objects pointing to package locations. These can be
+#' @param ... A series of objects pointing to package locations. These can be
 #'   strings with paths to local package directories, or, invocations of helper
 #'   functions such as \code{from_github()}.
-#' @param .make_clean an option to clean the working directory of any temporary
+#' @param .make_clean An option to clean the working directory of any temporary
 #'   package files downloaded from GitHub.
+#' @param .get_cyclocomp An option to include a measure of each function's
+#'   cyclomatic complexity.
 #' @export
 pkgattrs <- function(...,
                      .make_clean = TRUE,
@@ -14,19 +16,17 @@ pkgattrs <- function(...,
 
   pkg_location_list <- list(...)
 
-  github_paths <-
-    are_github_paths(pkg_location_list = pkg_location_list)
+  github_paths <- are_github_paths(pkg_location_list = pkg_location_list)
 
-  local_paths <-
-    are_local_paths(pkg_location_list = pkg_location_list)
+  local_paths <- are_local_paths(pkg_location_list = pkg_location_list)
 
   pkg_locations <-
     dplyr::tibble(
-      src = NA_character_,
-      repo = NA_character_,
-      url = NA_character_,
-      pkg_path = NA_character_
-    )[-1, ]
+      src = character(0),
+      repo = character(0),
+      url = character(0),
+      pkg_path = character(0)
+    )
 
   # Add local paths to `pkg_locations`
   if (length(local_paths) > 0) {
@@ -38,7 +38,9 @@ pkgattrs <- function(...,
           src = "local",
           repo = NA_character_,
           url = NA_character_,
-          pkg_path = pkg_location_list[local_paths] %>% purrr::flatten_chr()))
+          pkg_path = pkg_location_list[local_paths] %>% purrr::flatten_chr()
+        )
+      )
   }
 
   # Add GitHub paths to `pkg_locations`
@@ -58,7 +60,9 @@ pkgattrs <- function(...,
       pkg_name = stringr::str_replace(
         string = pkg_path,
         pattern = ".*\\/(.*)",
-        replacement = "\\1"))
+        replacement = "\\1"
+      )
+    )
 
   # Get the working directory
   present_wd <- getwd()
@@ -68,7 +72,9 @@ pkgattrs <- function(...,
 
     unlink(
       paste0(present_wd, "/temp_pkgattrs"),
-      recursive = TRUE, force = TRUE)
+      recursive = TRUE,
+      force = TRUE
+    )
   }
 
   # Generate the table of function info for all packages
@@ -93,15 +99,16 @@ pkgattrs <- function(...,
         # Download the package to the temp location
         downloader::download(
           url = pkg_locations$url[x],
-          dest = paste0(pkg_locations$pkg_path[x], "/pkg.zip"))
+          dest = paste0(pkg_locations$pkg_path[x], "/pkg.zip")
+        )
 
         # Unzip the package
         utils::unzip(
           zipfile = paste0(pkg_locations$pkg_path[x], "/pkg.zip"),
-          exdir = pkg_locations$pkg_path[x])
+          exdir = pkg_locations$pkg_path[x]
+        )
 
-        pkg_path <-
-          list.files(pkg_locations$pkg_path[x], full.names = TRUE)[2]
+        pkg_path <- list.files(pkg_locations$pkg_path[x], full.names = TRUE)[2]
       }
 
       # Temporarily change the working directory
@@ -118,7 +125,8 @@ pkgattrs <- function(...,
         list.files(
           path = "./R",
           pattern = ".*.R",
-          full.names = TRUE)
+          full.names = TRUE
+        )
 
       # Detect those lines from NAMESPACE where a
       # function is exported
@@ -131,7 +139,8 @@ pkgattrs <- function(...,
         (("./NAMESPACE" %>% readLines())[exported_fcn_lines]) %>%
         stringr::str_replace_all(
           pattern = "(^export|\\(|\\))",
-          replacement = "")
+          replacement = ""
+        )
 
       # Get the function reference table
       fcn_info_tbl <-
@@ -166,22 +175,26 @@ pkgattrs <- function(...,
             dplyr::tibble(
               pkg_name = pkg_name,
               fcn_name = fcn_name,
-                r_file = r_files[y],
-               pkg_src = pkg_src,
+              r_file = r_files[y],
+              pkg_src = pkg_src,
               pkg_repo = pkg_repo,
-              pkg_path = pkg_path) %>%
-            dplyr::mutate(
-              r_file_path = r_file) %>%
+              pkg_path = pkg_path
+            ) %>%
+            dplyr::mutate(r_file_path = r_file) %>%
             dplyr::mutate(
               r_file = stringr::str_replace(
                 string = r_file,
                 pattern = stringr::fixed("./R/"),
-                replacement = "")) %>%
+                replacement = "")
+            ) %>%
             dplyr::mutate(ln_start = line_numbers_start) %>%
             dplyr::mutate(ln_end = line_numbers_end) %>%
             dplyr::mutate(lines = (ln_end - ln_start + 1) %>% as.integer()) %>%
-            dplyr::mutate(exported = ifelse(
-              fcn_name %in% exported_fcns, TRUE, FALSE)) %>%
+            dplyr::mutate(
+              exported = ifelse(
+                fcn_name %in% exported_fcns, TRUE, FALSE
+              )
+            ) %>%
             dplyr::select(
               pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
               ln_start, ln_end, lines, pkg_repo, pkg_path)
