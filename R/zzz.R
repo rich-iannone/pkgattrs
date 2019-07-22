@@ -7,10 +7,12 @@ utils::globalVariables(
     "cyclocomp",
     "data",
     "exported",
+    "from",
     "pkg_path",
     "function_args_defaults",
     "fcn_lines",
     "fcn_name",
+    "label",
     "lines",
     "ln_start",
     "ln_end",
@@ -21,6 +23,9 @@ utils::globalVariables(
     "r_file_path",
     "roxygen",
     "subtype",
-    "total_lines"
+    "to",
+    "tooltip",
+    "total_lines",
+    "width"
   )
 )
