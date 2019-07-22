@@ -1,6 +1,5 @@
 #' Determine which list components provide GitHub repos
-#' @param pkg_location_list a list of package locations.
-#' @importFrom purrr map_lgl
+#' @param pkg_location_list A list of package locations.
 #' @noRd
 are_github_paths <- function(pkg_location_list) {
 
@@ -13,8 +12,7 @@ are_github_paths <- function(pkg_location_list) {
 }
 
 #' Determine which list components refer to local paths
-#' @param pkg_location_list a list of package locations.
-#' @importFrom purrr map_lgl
+#' @param pkg_location_list A list of package locations.
 #' @noRd
 are_local_paths <- function(pkg_location_list) {
 
