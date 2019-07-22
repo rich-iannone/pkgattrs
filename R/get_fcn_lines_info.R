@@ -1,28 +1,18 @@
 #' Get a table with a line-by-line info of package fcns
 #'
-#' Create a tibble of information related to each
-#' line of every function available in a package.
-#' @param ... a series of objects pointing to
-#' package locations. These can be strings with
-#' paths to local package directories, or,
-#' invocations of helper functions such as
-#' \code{from_github()}.
-#' @param .fcn_info_tbl an optional tibble of
-#' function information obtained from the
-#' \code{get_pk_fcn_info()} function.
-#' @param .make_clean an option to clean the
-#' working directory of any temporary package files
-#' downloaded from GitHub.
-#' @importFrom purrr map_df
-#' @importFrom dplyr pull tibble bind_rows mutate case_when select
-#' @importFrom stringr str_detect
-#' @export
+#' Create a tibble of information related to each line of every function
+#' available in a package.
+#' @param ... A series of objects pointing to package locations. These can be
+#'   strings with paths to local package directories, or, invocations of helper
+#'   functions such as \code{from_github()}.
+#' @param .fcn_info_tbl An optional tibble of function information obtained from
+#'   the \code{pkgattrs()} function.
+#' @param .make_clean An option to clean the working directory of any temporary
+#'   package files downloaded from GitHub.
+#' @noRd
 get_fcn_lines_info <- function(...,
                                .fcn_info_tbl = NULL,
                                .make_clean = TRUE) {
-
-  # Create bindings for global variables
-  ln <- type <- subtype <- ln_content <- NULL
 
   if (!is.null(.fcn_info_tbl)) {
     fcn_df <- .fcn_info_tbl
@@ -50,7 +40,8 @@ get_fcn_lines_info <- function(...,
         gsub(
           pattern = "^\\.",
           replacement = pkg_path,
-          x = r_file_path)
+          x = r_file_path
+        )
 
       fcn_lines_tbl <-
         dplyr::tibble(
@@ -59,7 +50,8 @@ get_fcn_lines_info <- function(...,
           fcn_name = fcn_name,
           ln = fcn_start:fcn_end,
           type = "function",
-          ln_content = (r_file_path %>% readLines())[fcn_start:fcn_end])
+          ln_content = (r_file_path %>% readLines())[fcn_start:fcn_end]
+        )
 
       if ((fcn_lines_tbl %>% dplyr::pull("ln"))[1] >= 2) {
 
@@ -74,30 +66,24 @@ get_fcn_lines_info <- function(...,
 
           if (
             stringr::str_detect(
-              string =
-              (r_file_path %>% readLines())[line],
+              string = (r_file_path %>% readLines())[line],
               pattern = "^$")) {
 
             if (inside_roxygen_block) break
             blank_line <- blank_line + 1
 
           } else if (
-
             stringr::str_detect(
-              string =
-              (r_file_path %>% readLines())[line],
+              string = (r_file_path %>% readLines())[line],
               pattern = "^#'")) {
 
             inside_roxygen_block <- TRUE
             blank_lines_before_roxygen <- blank_line
 
-          } else if (
-
-            inside_roxygen_block &
-            stringr::str_detect(
-              string =
-              (r_file_path %>% readLines())[line],
-              pattern = "^(?!#').*$")) {
+          } else if (inside_roxygen_block &
+                     stringr::str_detect(
+                       string = (r_file_path %>% readLines())[line],
+                       pattern = "^(?!#').*$")) {
             break
           }
 
@@ -109,8 +95,10 @@ get_fcn_lines_info <- function(...,
                 fcn_name = fcn_name,
                 ln = line,
                 type = "roxygen",
-                ln_content = (r_file_path %>% readLines())[line]),
-              fcn_lines_tbl)
+                ln_content = (r_file_path %>% readLines())[line]
+              ),
+              fcn_lines_tbl
+            )
 
           line <- line - 1
 
@@ -120,14 +108,18 @@ get_fcn_lines_info <- function(...,
 
       # Provide a `subtype` classification
       fcn_lines_tbl %>%
-        dplyr::mutate(subtype = case_when(
+        dplyr::mutate(subtype = dplyr::case_when(
           type == "function" &
-            stringr::str_detect(string = ln_content, pattern = "(^$|^[ ]*$)") ~ "blank",
+            stringr::str_detect(ln_content, "(^$|^[ ]*$)") ~ "blank",
           type == "function" &
-            stringr::str_detect(string = ln_content, pattern = "[ ]*#.*") ~ "comment",
+            stringr::str_detect(ln_content, "[ ]*#.*") ~ "comment",
           type == "function" ~ "code",
-          type == "roxygen" ~ "roxygen")) %>%
-        dplyr::select(pkg_name, pkg_src, fcn_name, ln, type, subtype, ln_content)
+          type == "roxygen" ~ "roxygen")
+        ) %>%
+        dplyr::select(
+          pkg_name, pkg_src, fcn_name, ln,
+          type, subtype, ln_content
+        )
     })
 
   if (is.null(.fcn_info_tbl) && .make_clean) {
@@ -137,7 +129,9 @@ get_fcn_lines_info <- function(...,
 
       unlink(
         "./temp_pkgattrs",
-        recursive = TRUE, force = TRUE)
+        recursive = TRUE,
+        force = TRUE
+      )
     }
   }
 
