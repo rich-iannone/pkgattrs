@@ -7,17 +7,13 @@
 write_pkg_api(..., filename)
 }
 \arguments{
-\item{...}{any objects pointing to a package
-location. This can be a string with a
-path to a local package directory, or, an
-invocation of a helper function such as
-\code{from_github()}.}
+\item{...}{Any objects pointing to a package location. This can be a string
+with a path to a local package directory, or, an invocation of a helper
+function such as \code{from_github()}.}
 
-\item{filename}{the output filename for the
-text to be written to disk.}
+\item{filename}{The output filename for the text to be written to disk.}
 }
 \description{
-Exported functions from a package (along with
-their arguments and any associated default values)
-are printed to a file.
+Exported functions from a package (along with their arguments and any
+associated default values) are printed to a file.
 }

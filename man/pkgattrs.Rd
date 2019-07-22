@@ -4,15 +4,18 @@
 \alias{pkgattrs}
 \title{Get a table of info of package fcns}
 \usage{
-pkgattrs(..., .make_clean = TRUE)
+pkgattrs(..., .make_clean = TRUE, .get_cyclocomp = FALSE)
 }
 \arguments{
-\item{...}{a series of objects pointing to package locations. These can be
+\item{...}{A series of objects pointing to package locations. These can be
 strings with paths to local package directories, or, invocations of helper
 functions such as \code{from_github()}.}
 
-\item{.make_clean}{an option to clean the working directory of any temporary
+\item{.make_clean}{An option to clean the working directory of any temporary
 package files downloaded from GitHub.}
+
+\item{.get_cyclocomp}{An option to include a measure of each function's
+cyclomatic complexity.}
 }
 \description{
 Create a tibble of information related to each function available in a
