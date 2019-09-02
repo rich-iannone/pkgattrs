@@ -72,7 +72,7 @@ write_pkg_api <- function(...,
             default_values = default_values
           ) %>%
           dplyr::mutate(
-            args_defaults = case_when(
+            args_defaults = dplyr::case_when(
               default_values != "" ~ paste(arg_names, default_values, sep = " = "),
               TRUE ~ arg_names)
           ) %>%
