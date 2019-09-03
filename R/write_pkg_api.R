@@ -47,7 +47,8 @@ write_pkg_api <- function(...,
             default_value <-
               paste(
                 paste0("\"", formals(exported_fcns[x])[[i]], "\""),
-                collapse = ", ")
+                collapse = ", "
+              )
 
           } else if (typeof(formals(exported_fcns[x])[[i]]) == "NULL") {
 
