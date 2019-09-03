@@ -8,7 +8,7 @@
 #' @param filename The output filename for the text to be written to disk.
 #' @export
 write_pkg_api <- function(...,
-                          filename) {
+                          filename = "pkg_api") {
 
   # Get a table of package function info
   pkg_fcn_info <- pkgattrs(...)
