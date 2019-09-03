@@ -18,15 +18,16 @@ knitr::opts_chunk$set(
 
 # pkgattrs
 
-The **pkgattrs** package is useful for getting information on the contents of any R package. One of the things that can be done is generating a summary of functions available in one or more packages. We can conveniently do this using the `get_pkg_fcn_info()` function. Here is an example where we can create an informative table of the functions in the `pkgattrs` and `blastula` packages (hosted on GitHub).
+The **pkgattrs** package is useful for getting information on the contents of any R package. One of the things that can be done is generating a summary of functions available in one or more packages. We can conveniently do this using the `pkgattrs()` function. Here is an example where we can create an informative table of the functions in the `pkgattrs` and `blastula` packages (hosted on GitHub).
 
-```{r}
+```{r include=FALSE}
 library(pkgattrs)
 
 fcn_info <-
-  get_pkg_fcn_info(
+  pkgattrs(
     from_github("rich-iannone/pkgattrs"),
-    from_github("rich-iannone/blastula"))
+    from_github("rich-iannone/blastula")
+  )
 ```
 
 The resulting tibble contains the following information in each record:
@@ -53,7 +54,7 @@ fcn_info
 The package also supplies functions for visualizing the relationships between a package's functions as a network graph. For example, we could obtain a function information tibble for the **pointblank** package, transform that to a graph, and then examine this network with the `render_graph()` function.
 
 ```{r eval=FALSE}
-get_pkg_fcn_info(from_github("rich-iannone/pointblank")) %>%
+pkgattrs(from_github("rich-iannone/pointblank")) %>%
   create_function_graph() %>%
   render_graph(layout = "kk")
 ```
@@ -65,7 +66,7 @@ In this graph, the green nodes show the functions that are exported, and, the re
 We can also focus on a subgraph with a single function. The function `show_called_functions()` can be used with the function graph object, taking a function name to show all the package functions that function does call. In the following example, we can examine which functions are called by the `print.ptblank_agent()` method.
 
 ```{r eval=FALSE}
-get_pkg_fcn_info(from_github("rich-iannone/pointblank")) %>%
+pkgattrs(from_github("rich-iannone/pointblank")) %>%
   create_function_graph() %>%
   show_called_functions(caller_fcn = "print.ptblank_agent")
 ```
@@ -75,9 +76,7 @@ get_pkg_fcn_info(from_github("rich-iannone/pointblank")) %>%
 Finally, the package has a means to write out a given package's API with the `write_pkg_api()` function. For the **pkgattrs** package (this package), we can generate a file that lists the exported functions along with each of the function arguments and default values.
 
 ```{r eval=FALSE}
-write_pkg_api(
-  getwd(),
-  filename = "API")
+write_pkg_api(filename = "API")
 ```
 
 This example generates the following text in the `API` file:
@@ -92,9 +91,8 @@ write_pkg_api(..., filename)
 
 ## Installation
 
-You can install pkgattrs from GitHub with:
+You can install **pkgattrs** from GitHub with:
 
 ```{r gh-installation, eval = FALSE}
-# install.packages("devtools")
 devtools::install_github("rich-iannone/pkgattrs")
 ```

@@ -11,22 +11,9 @@ status](https://www.r-pkg.org/badges/version/pkgattrs)](https://cran.r-project.o
 The **pkgattrs** package is useful for getting information on the
 contents of any R package. One of the things that can be done is
 generating a summary of functions available in one or more packages. We
-can conveniently do this using the `get_pkg_fcn_info()` function. Here
-is an example where we can create an informative table of the functions
-in the `pkgattrs` and `blastula` packages (hosted on GitHub).
-
-``` r
-library(pkgattrs)
-
-fcn_info <-
-  get_pkg_fcn_info(
-    from_github("rich-iannone/pkgattrs"),
-    from_github("rich-iannone/blastula"))
-#> Skipping 1 packages ahead of CRAN: glue
-#> Installing 2 packages: pillar, utf8
-#> Skipping 1 packages ahead of CRAN: glue
-#> Installing 2 packages: pillar, utf8
-```
+can conveniently do this using the `pkgattrs()` function. Here is an
+example where we can create an informative table of the functions in the
+`pkgattrs` and `blastula` packages (hosted on GitHub).
 
 The resulting tibble contains the following information in each record:
 
@@ -57,22 +44,22 @@ The resulting tibble contains the following information in each record:
 
 ``` r
 fcn_info
-#> # A tibble: 21 x 19
-#>    pkg_name pkg_src fcn_name  exported r_file  r_file_path ln_start ln_end
-#>    <chr>    <chr>   <chr>     <lgl>    <chr>   <chr>          <int>  <int>
-#>  1 pkgattrs GitHub  are_gith… FALSE    utils.R ./R/utils.R        5     13
-#>  2 pkgattrs GitHub  are_loca… FALSE    utils.R ./R/utils.R       19     26
-#>  3 pkgattrs GitHub  create_f… TRUE     functi… ./R/functi…       17     66
-#>  4 pkgattrs GitHub  from_git… TRUE     from_g… ./R/from_g…        9     16
-#>  5 pkgattrs GitHub  get_fcn_… TRUE     get_fc… ./R/get_fc…       20    145
-#>  6 pkgattrs GitHub  get_pkg_… TRUE     get_pk… ./R/get_pk…       23    347
-#>  7 pkgattrs GitHub  show_cal… TRUE     functi… ./R/functi…       80     92
-#>  8 pkgattrs GitHub  write_pk… TRUE     write_… ./R/write_…       16     77
-#>  9 blastula GitHub  add_cta_… TRUE     add_ct… ./R/add_ct…       43     66
-#> 10 blastula GitHub  add_ggpl… TRUE     add_gg… ./R/add_gg…       52     71
-#> # ... with 11 more rows, and 11 more variables: fcn_lines <int>,
+#> # A tibble: 127 x 18
+#>    pkg_name pkg_src fcn_name exported r_file r_file_path ln_start ln_end
+#>    <chr>    <chr>   <chr>    <lgl>    <chr>  <chr>          <int>  <int>
+#>  1 pkgattrs GitHub  are_git… FALSE    utils… ./R/utils.R        4     12
+#>  2 pkgattrs GitHub  are_loc… FALSE    utils… ./R/utils.R       17     24
+#>  3 pkgattrs GitHub  from_gi… TRUE     from_… ./R/from_g…        8     16
+#>  4 pkgattrs GitHub  functio… TRUE     funct… ./R/functi…       11     21
+#>  5 pkgattrs GitHub  functio… TRUE     funct… ./R/functi…       35     54
+#>  6 pkgattrs GitHub  get_fcn… FALSE    get_f… ./R/get_fc…       13    139
+#>  7 pkgattrs GitHub  pkgattrs TRUE     pkgat… ./R/pkgatt…       13    363
+#>  8 pkgattrs GitHub  produce… FALSE    funct… ./R/functi…       57    103
+#>  9 pkgattrs GitHub  write_p… TRUE     write… ./R/write_…       10    101
+#> 10 blastula GitHub  `%||%`   FALSE    utils… ./R/utils.R       41     43
+#> # … with 117 more rows, and 10 more variables: fcn_lines <int>,
 #> #   code <dbl>, comment <dbl>, blank <dbl>, roxygen <dbl>,
-#> #   total_lines <dbl>, cyclocomp <int>, pkg_repo <chr>, pkg_path <chr>,
+#> #   total_lines <dbl>, pkg_repo <chr>, pkg_path <chr>,
 #> #   n_pkg_fcns_called <int>, pkg_fcns_called <list>
 ```
 
@@ -83,7 +70,7 @@ transform that to a graph, and then examine this network with the
 `render_graph()` function.
 
 ``` r
-get_pkg_fcn_info(from_github("rich-iannone/pointblank")) %>%
+pkgattrs(from_github("rich-iannone/pointblank")) %>%
   create_function_graph() %>%
   render_graph(layout = "kk")
 ```
@@ -102,7 +89,7 @@ does call. In the following example, we can examine which functions are
 called by the `print.ptblank_agent()` method.
 
 ``` r
-get_pkg_fcn_info(from_github("rich-iannone/pointblank")) %>%
+pkgattrs(from_github("rich-iannone/pointblank")) %>%
   create_function_graph() %>%
   show_called_functions(caller_fcn = "print.ptblank_agent")
 ```
@@ -115,9 +102,7 @@ package), we can generate a file that lists the exported functions along
 with each of the function arguments and default values.
 
 ``` r
-write_pkg_api(
-  getwd(),
-  filename = "API")
+write_pkg_api(filename = "API")
 ```
 
 This example generates the following text in the `API` file:
@@ -130,9 +115,8 @@ This example generates the following text in the `API` file:
 
 ## Installation
 
-You can install pkgattrs from GitHub with:
+You can install **pkgattrs** from GitHub with:
 
 ``` r
-# install.packages("devtools")
 devtools::install_github("rich-iannone/pkgattrs")
 ```
