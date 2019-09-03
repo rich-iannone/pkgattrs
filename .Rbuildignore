@@ -4,4 +4,4 @@
 ^CODE_OF_CONDUCT\.md$
 ^README\.Rmd$
 ^\.travis\.yml$
-^API$
+^pkg_api$
