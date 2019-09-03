@@ -4,7 +4,7 @@
 #' associated default values) are printed to a file.
 #' @param ... Any objects pointing to a package location. This can be a string
 #'   with a path to a local package directory, or, an invocation of a helper
-#'   function such as \code{from_github()}.
+#'   function such as [from_github()].
 #' @param filename The output filename for the text to be written to disk.
 #' @export
 write_pkg_api <- function(...,
