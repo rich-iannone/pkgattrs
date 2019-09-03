@@ -15,6 +15,16 @@ can conveniently do this using the `pkgattrs()` function. Here is an
 example where we can create an informative table of the functions in the
 `pkgattrs` and `blastula` packages (hosted on GitHub).
 
+``` r
+library(pkgattrs)
+
+fcn_info <-
+  pkgattrs(
+    from_github("rich-iannone/pkgattrs"),
+    from_github("rich-iannone/blastula")
+  )
+```
+
 The resulting tibble contains the following information in each record:
 
   - the package name (`pkg_name`)
@@ -30,7 +40,7 @@ The resulting tibble contains the following information in each record:
     comments (`comment`), and for roxygen statements (`roxygen`), and,
     the `fcn_lines` lines that are blank (`blank`): the sum of all these
     is given in `total_lines`
-  - the cyclomatic complexity of the function (`cyclocomp`)
+  - optionally, the cyclomatic complexity of the function (`cyclocomp`)
   - the name of the package repository, if it was obtained from one
     (`pkg_repo`)
   - the name of the package path, if it was a locally-available package
