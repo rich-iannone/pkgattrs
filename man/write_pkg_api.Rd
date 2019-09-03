@@ -4,12 +4,12 @@
 \alias{write_pkg_api}
 \title{Write the pkg API to disk}
 \usage{
-write_pkg_api(..., filename)
+write_pkg_api(..., filename = "pkg_api")
 }
 \arguments{
 \item{...}{Any objects pointing to a package location. This can be a string
 with a path to a local package directory, or, an invocation of a helper
-function such as \code{from_github()}.}
+function such as [from_github()].}
 
 \item{filename}{The output filename for the text to be written to disk.}
 }
