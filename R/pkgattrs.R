@@ -16,6 +16,10 @@ pkgattrs <- function(...,
 
   pkg_location_list <- list(...)
 
+  if (length(pkg_location_list) == 0) {
+    pkg_location_list <- list(".")
+  }
+
   github_paths <- are_github_paths(pkg_location_list = pkg_location_list)
 
   local_paths <- are_local_paths(pkg_location_list = pkg_location_list)
