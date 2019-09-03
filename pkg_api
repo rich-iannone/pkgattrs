@@ -1,0 +1,5 @@
+from_github(repo)
+function_graph_all(pkgattrs_tbl, pkg_name = NULL)
+function_graph_single(pkgattrs_tbl, target_fcn, pkg_name = NULL)
+pkgattrs(..., .make_clean = TRUE, .get_cyclocomp = FALSE)
+write_pkg_api(..., filename = "pkg_api")
