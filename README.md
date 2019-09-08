@@ -1,10 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![Travis build
-status](https://travis-ci.org/rich-iannone/pkgattrs.svg?branch=master)](https://travis-ci.org/rich-iannone/pkgattrs)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/pkgattrs)](https://cran.r-project.org/package=pkgattrs)
+[![Travis build
+status](https://travis-ci.org/rich-iannone/pkgattrs.svg?branch=master)](https://travis-ci.org/rich-iannone/pkgattrs)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/rich-iannone/pkgattrs?branch=master&svg=true)](https://ci.appveyor.com/project/rich-iannone/pkgattrs)
 
 # pkgattrs
 
@@ -16,8 +18,6 @@ example where we can create an informative table of the functions in the
 `pkgattrs` and `blastula` packages (hosted on GitHub).
 
 ``` r
-library(pkgattrs)
-
 fcn_info <-
   pkgattrs(
     from_github("rich-iannone/pkgattrs"),
@@ -75,17 +75,16 @@ fcn_info
 
 The package also supplies functions for visualizing the relationships
 between a package’s functions as a network graph. For example, we could
-obtain a function information tibble for the **pointblank** package,
+obtain a function information tibble for the **stationary** package,
 transform that to a graph, and then examine this network with the
-`render_graph()` function.
+`function_graph_all()` function.
 
 ``` r
-pkgattrs(from_github("rich-iannone/pointblank")) %>%
-  create_function_graph() %>%
-  render_graph(layout = "kk")
+pkgattrs(from_github("rich-iannone/stationary")) %>%
+  function_graph_all()
 ```
 
-<img src="man/figures/pointblank_graph.png">
+<img src="man/figures/stationary_graph_all.png">
 
 In this graph, the green nodes show the functions that are exported,
 and, the relative sizing of nodes is scaled the number of package
@@ -93,18 +92,17 @@ functions called by each. Each edge represents the relationship
 `called_in`.
 
 We can also focus on a subgraph with a single function. The function
-`show_called_functions()` can be used with the function graph object,
-taking a function name to show all the package functions that function
-does call. In the following example, we can examine which functions are
-called by the `print.ptblank_agent()` method.
+`function_graph_single()` can be used with the function graph object,
+taking a function name to show all the package functions that the
+function calls. In the following example, we can examine which functions
+are called by the `print.ptblank_agent()` method.
 
 ``` r
 pkgattrs(from_github("rich-iannone/pointblank")) %>%
-  create_function_graph() %>%
-  show_called_functions(caller_fcn = "print.ptblank_agent")
+  function_graph_single(target_fcn = "print.ptblank_agent")
 ```
 
-<img src="man/figures/pointblank_called_functions.png">
+<img src="man/figures/pointblank_graph_single.png">
 
 Finally, the package has a means to write out a given package’s API with
 the `write_pkg_api()` function. For the **pkgattrs** package (this
@@ -117,11 +115,11 @@ write_pkg_api(filename = "API")
 
 This example generates the following text in the `API` file:
 
-    create_function_graph(pkg_fcn_info, pkg_name)
     from_github(repo)
-    get_pkg_fcn_info(...)
-    show_called_functions(fcn_graph, caller_fcn)
-    write_pkg_api(..., filename)
+    function_graph_all(pkgattrs_tbl, pkg_name = NULL)
+    function_graph_single(pkgattrs_tbl, target_fcn, pkg_name = NULL)
+    pkgattrs(..., .make_clean = TRUE, .get_cyclocomp = FALSE)
+    write_pkg_api(..., filename = "pkg_api")
 
 ## Installation
 
