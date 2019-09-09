@@ -2,7 +2,7 @@
 % Please edit documentation in R/pkgattrs.R
 \name{pkgattrs}
 \alias{pkgattrs}
-\title{Get a table of info of package fcns}
+\title{Get a table of info functions inside one or more packages}
 \usage{
 pkgattrs(..., .make_clean = TRUE, .get_cyclocomp = FALSE)
 }
@@ -18,6 +18,6 @@ package files downloaded from GitHub.}
 cyclomatic complexity.}
 }
 \description{
-Create a tibble of information related to each function available in a
-package.
+Create a tibble of information related to each function available in one or
+several packages.
 }

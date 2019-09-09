@@ -4,13 +4,13 @@
 \alias{function_graph_single}
 \title{Show all package functions that are called from a given function}
 \usage{
-function_graph_single(pkgattrs_tbl, target_fcn, pkg_name = NULL)
+function_graph_single(pkgattrs_tbl, target_fn, pkg_name = NULL)
 }
 \arguments{
 \item{pkgattrs_tbl}{A tibble object that contains package function
 information. This is created by the \code{pkgattrs()} function.}
 
-\item{target_fcn}{the name of the function that is to be examined for its
+\item{target_fn}{the name of the function that is to be examined for its
 calls of package functions.}
 
 \item{pkg_name}{An optional package name for filtering the tibble provided to
