@@ -29,11 +29,11 @@ function_graph_all <- function(pkgattrs_tbl,
 #' @param pkg_name An optional package name for filtering the tibble provided to
 #'   \code{pkgattrs_tbl}, which is useful if that tibble describes multiple
 #'   packages.
-#' @param target_fcn the name of the function that is to be examined for its
+#' @param target_fn the name of the function that is to be examined for its
 #'   calls of package functions.
 #' @export
 function_graph_single <- function(pkgattrs_tbl,
-                                  target_fcn,
+                                  target_fn,
                                   pkg_name = NULL) {
 
   complete_graph <-
@@ -45,7 +45,7 @@ function_graph_single <- function(pkgattrs_tbl,
   partial_graph <-
     suppressMessages(
       complete_graph %>%
-        DiagrammeR::select_nodes(label == target_fcn) %>%
+        DiagrammeR::select_nodes(label == target_fn) %>%
         DiagrammeR::trav_in(add_to_selection = TRUE) %>%
         DiagrammeR::transform_to_subgraph_ws()
     )
@@ -66,17 +66,17 @@ produce_complete_graph <- function(pkgattrs_tbl,
 
   edge_tbl <-
     pkgattrs_tbl %>%
-    tidyr::unnest(pkg_fcns_called) %>%
-    dplyr::select(fcn_name, pkg_fcns_called) %>%
-    dplyr::rename(from = pkg_fcns_called) %>%
-    dplyr::rename(to = fcn_name) %>%
+    tidyr::unnest(pkg_fns_called) %>%
+    dplyr::select(fn_name, pkg_fns_called) %>%
+    dplyr::rename(from = pkg_fns_called) %>%
+    dplyr::rename(to = fn_name) %>%
     dplyr::mutate(color = "gray90") %>%
     dplyr::mutate(arrowhead = "dot")
 
   node_tbl <-
     pkgattrs_tbl %>%
     dplyr::mutate(tooltip = paste0("file: ", r_file)) %>%
-    dplyr::select(fcn_name, exported, n_pkg_fcns_called, tooltip) %>%
+    dplyr::select(fn_name, exported, n_pkg_fns_called, tooltip) %>%
     dplyr::mutate(fillcolor = ifelse(exported, "green", "lightblue")) %>%
     dplyr::mutate(fontcolor = "gray35") %>%
     dplyr::mutate(color = "gray90")
@@ -84,7 +84,7 @@ produce_complete_graph <- function(pkgattrs_tbl,
   DiagrammeR::create_graph() %>%
     DiagrammeR::add_nodes_from_table(
       table = node_tbl,
-      label_col = fcn_name,
+      label_col = fn_name,
       set_type = "function"
     ) %>%
     DiagrammeR::add_edges_from_table(
@@ -95,7 +95,7 @@ produce_complete_graph <- function(pkgattrs_tbl,
       set_rel = "called_in"
     ) %>%
     DiagrammeR::rescale_node_attrs(
-      node_attr_from = n_pkg_fcns_called,
+      node_attr_from = n_pkg_fns_called,
       to_lower_bound = 0.15,
       to_upper_bound = 1.00,
       node_attr_to = width

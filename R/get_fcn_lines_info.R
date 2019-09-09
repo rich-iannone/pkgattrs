@@ -1,39 +1,39 @@
-#' Get a table with a line-by-line info of package fcns
+#' Get a table with a line-by-line info for each package function
 #'
 #' Create a tibble of information related to each line of every function
 #' available in a package.
 #' @param ... A series of objects pointing to package locations. These can be
 #'   strings with paths to local package directories, or, invocations of helper
 #'   functions such as \code{from_github()}.
-#' @param .fcn_info_tbl An optional tibble of function information obtained from
+#' @param .fn_info_tbl An optional tibble of function information obtained from
 #'   the \code{pkgattrs()} function.
 #' @param .make_clean An option to clean the working directory of any temporary
 #'   package files downloaded from GitHub.
 #' @noRd
-get_fcn_lines_info <- function(...,
-                               .fcn_info_tbl = NULL,
+get_fn_lines_info <- function(...,
+                               .fn_info_tbl = NULL,
                                .make_clean = TRUE) {
 
-  if (!is.null(.fcn_info_tbl)) {
-    fcn_df <- .fcn_info_tbl
+  if (!is.null(.fn_info_tbl)) {
+    fn_df <- .fn_info_tbl
   } else {
-    fcn_df <- get_pkg_fcn_info(..., .make_clean = FALSE)
+    fn_df <- get_pkg_fn_info(..., .make_clean = FALSE)
   }
 
-  fcn_lines_tbl <-
-    seq(nrow(fcn_df)) %>%
+  fn_lines_tbl <-
+    seq(nrow(fn_df)) %>%
     purrr::map_df(.f = function(x) {
 
-      fcn_df_line <- fcn_df[x, ]
+      fn_df_line <- fn_df[x, ]
 
-      fcn_name <- fcn_df_line %>% dplyr::pull("fcn_name")
-      file <- fcn_df_line %>% dplyr::pull("r_file")
-      fcn_start <- fcn_df_line %>% dplyr::pull("ln_start")
-      fcn_end <- fcn_df_line %>% dplyr::pull("ln_end")
-      r_file_path <- fcn_df_line %>% dplyr::pull("r_file_path")
-      pkg_name <- fcn_df_line %>% dplyr::pull("pkg_name")
-      pkg_src <- fcn_df_line %>% dplyr::pull("pkg_src")
-      pkg_path <- fcn_df_line %>% dplyr::pull("pkg_path")
+      fn_name <- fn_df_line %>% dplyr::pull("fn_name")
+      file <- fn_df_line %>% dplyr::pull("r_file")
+      fn_start <- fn_df_line %>% dplyr::pull("ln_start")
+      fn_end <- fn_df_line %>% dplyr::pull("ln_end")
+      r_file_path <- fn_df_line %>% dplyr::pull("r_file_path")
+      pkg_name <- fn_df_line %>% dplyr::pull("pkg_name")
+      pkg_src <- fn_df_line %>% dplyr::pull("pkg_src")
+      pkg_path <- fn_df_line %>% dplyr::pull("pkg_path")
 
       # Get the .R file path
       r_file_path <-
@@ -43,19 +43,19 @@ get_fcn_lines_info <- function(...,
           x = r_file_path
         )
 
-      fcn_lines_tbl <-
+      fn_lines_tbl <-
         dplyr::tibble(
           pkg_name = pkg_name,
           pkg_src = pkg_src,
-          fcn_name = fcn_name,
-          ln = fcn_start:fcn_end,
+          fn_name = fn_name,
+          ln = fn_start:fn_end,
           type = "function",
-          ln_content = (r_file_path %>% readLines())[fcn_start:fcn_end]
+          ln_content = (r_file_path %>% readLines())[fn_start:fn_end]
         )
 
-      if ((fcn_lines_tbl %>% dplyr::pull("ln"))[1] >= 2) {
+      if ((fn_lines_tbl %>% dplyr::pull("ln"))[1] >= 2) {
 
-        line <- (fcn_lines_tbl %>% dplyr::pull("ln"))[1]
+        line <- (fn_lines_tbl %>% dplyr::pull("ln"))[1]
         line <- line - 1
 
         blank_line <- 0
@@ -87,17 +87,17 @@ get_fcn_lines_info <- function(...,
             break
           }
 
-          fcn_lines_tbl <-
+          fn_lines_tbl <-
             dplyr::bind_rows(
               dplyr::tibble(
                 pkg_name = pkg_name,
                 pkg_src = pkg_src,
-                fcn_name = fcn_name,
+                fn_name = fn_name,
                 ln = line,
                 type = "roxygen",
                 ln_content = (r_file_path %>% readLines())[line]
               ),
-              fcn_lines_tbl
+              fn_lines_tbl
             )
 
           line <- line - 1
@@ -107,7 +107,7 @@ get_fcn_lines_info <- function(...,
       }
 
       # Provide a `subtype` classification
-      fcn_lines_tbl %>%
+      fn_lines_tbl %>%
         dplyr::mutate(subtype = dplyr::case_when(
           type == "function" &
             stringr::str_detect(ln_content, "(^$|^[ ]*$)") ~ "blank",
@@ -117,12 +117,12 @@ get_fcn_lines_info <- function(...,
           type == "roxygen" ~ "roxygen")
         ) %>%
         dplyr::select(
-          pkg_name, pkg_src, fcn_name, ln,
+          pkg_name, pkg_src, fn_name, ln,
           type, subtype, ln_content
         )
     })
 
-  if (is.null(.fcn_info_tbl) && .make_clean) {
+  if (is.null(.fn_info_tbl) && .make_clean) {
 
     # Remove temporary directory
     if (dir.exists("./temp_pkgattrs")) {
@@ -135,5 +135,5 @@ get_fcn_lines_info <- function(...,
     }
   }
 
-  fcn_lines_tbl
+  fn_lines_tbl
 }

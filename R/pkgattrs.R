@@ -1,7 +1,8 @@
-#' Get a table of info of package fcns
+#' Get a table of info functions inside one or more packages
 #'
-#' Create a tibble of information related to each function available in a
-#' package.
+#' Create a tibble of information related to each function available in one or
+#' several packages.
+#'
 #' @param ... A series of objects pointing to package locations. These can be
 #'   strings with paths to local package directories, or, invocations of helper
 #'   functions such as \code{from_github()}.
@@ -82,7 +83,7 @@ pkgattrs <- function(...,
   }
 
   # Generate the table of function info for all packages
-  fcn_info_tbl_all <-
+  fn_info_tbl_all <-
     seq(nrow(pkg_locations)) %>%
     purrr::map_df(.f = function(x) {
 
@@ -134,20 +135,21 @@ pkgattrs <- function(...,
 
       # Detect those lines from NAMESPACE where a
       # function is exported
-      exported_fcn_lines <-
-        "./NAMESPACE" %>% readLines() %>%
+      exported_fn_lines <-
+        "./NAMESPACE" %>%
+        readLines() %>%
         stringr::str_detect(pattern = "^export\\(.*") %>%
         which()
 
-      exported_fcns <-
-        (("./NAMESPACE" %>% readLines())[exported_fcn_lines]) %>%
+      exported_fns <-
+        (("./NAMESPACE" %>% readLines())[exported_fn_lines]) %>%
         stringr::str_replace_all(
           pattern = "(^export|\\(|\\))",
           replacement = ""
         )
 
       # Get the function reference table
-      fcn_info_tbl <-
+      fn_info_tbl <-
         seq(r_files) %>%
         purrr::map_df(.f = function(y) {
 
@@ -171,15 +173,15 @@ pkgattrs <- function(...,
           line_numbers_start <- which(function_def_lines)
           line_numbers_end <- which(function_end_lines)
 
-          fcn_name <-
+          fn_name <-
             (file_lines[function_def_lines] %>%
                stringr::str_split_fixed(pattern = " ", 2)
             )[, 1]
 
-          fcn_info_tbl <-
+          fn_info_tbl <-
             dplyr::tibble(
               pkg_name = pkg_name,
-              fcn_name = fcn_name,
+              fn_name = fn_name,
               r_file = r_files[y],
               pkg_src = pkg_src,
               pkg_repo = pkg_repo,
@@ -197,53 +199,53 @@ pkgattrs <- function(...,
             dplyr::mutate(lines = (ln_end - ln_start + 1) %>% as.integer()) %>%
             dplyr::mutate(
               exported = ifelse(
-                fcn_name %in% exported_fcns, TRUE, FALSE
+                fn_name %in% exported_fns, TRUE, FALSE
               )
             ) %>%
             dplyr::select(
-              pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
+              pkg_name, pkg_src, fn_name, exported, r_file, r_file_path,
               ln_start, ln_end, lines, pkg_repo, pkg_path
             )
 
-          fcn_info_tbl
+          fn_info_tbl
         })
 
       # Get a vector of all package functions
-      all_fcns <- fcn_info_tbl %>% dplyr::pull(fcn_name)
+      all_fns <- fn_info_tbl %>% dplyr::pull(fn_name)
 
-      fcn_info_tbl <-
-        seq(all_fcns) %>%
+      fn_info_tbl <-
+        seq(all_fns) %>%
         purrr::map_df(.f = function(y) {
 
-          fcn_name <- all_fcns[y]
-          tbl_row <- fcn_info_tbl[y, ]
+          fn_name <- all_fns[y]
+          tbl_row <- fn_info_tbl[y, ]
 
-          fcn_lines <-
+          fn_lines <-
             readLines(tbl_row %>% dplyr::pull("r_file_path"))[
               seq((tbl_row %>% dplyr::pull("ln_start")),
                   (tbl_row %>% dplyr::pull("ln_end")))]
 
           # Determine whether any pkg functions are called
           any_pkg_function_called <-
-            fcn_lines %>%
+            fn_lines %>%
             stringr::str_detect(
-              pattern = paste(all_fcns, "\\(", sep = "", collapse = "|")) %>%
+              pattern = paste(all_fns, "\\(", sep = "", collapse = "|")) %>%
             any()
 
           if (any_pkg_function_called) {
 
-            # Determine which lines have calls to pkg fcns
+            # Determine which lines have calls to package functions
             which_lines_pkg_function_called <-
-              fcn_lines %>%
+              fn_lines %>%
               stringr::str_detect(
-                pattern = paste(all_fcns, "\\(", sep = "", collapse = "|")) %>%
+                pattern = paste(all_fns, "\\(", sep = "", collapse = "|")) %>%
               which()
 
             # Get the called functions
             called_functions <-
-              fcn_lines[which_lines_pkg_function_called] %>%
+              fn_lines[which_lines_pkg_function_called] %>%
               stringr::str_extract_all(
-                pattern = paste(all_fcns, sep = "", collapse = "|")) %>%
+                pattern = paste(all_fns, sep = "", collapse = "|")) %>%
               unlist() %>%
               unique()
 
@@ -252,112 +254,110 @@ pkgattrs <- function(...,
               tbl_row %>%
               dplyr::inner_join(
                 dplyr::tibble(
-                  fcn_name = fcn_name,
-                  n_pkg_fcns_called = length(called_functions) %>% as.integer(),
-                  names_fcns_called = called_functions),
-                by = "fcn_name")
+                  fn_name = fn_name,
+                  n_pkg_fns_called = length(called_functions) %>% as.integer(),
+                  names_fns_called = called_functions),
+                by = "fn_name")
 
           } else {
 
             tbl_row <-
               tbl_row %>%
-              dplyr::mutate(n_pkg_fcns_called = 0L) %>%
-              dplyr::mutate(names_fcns_called = NA_character_)
+              dplyr::mutate(n_pkg_fns_called = 0L) %>%
+              dplyr::mutate(names_fns_called = NA_character_)
           }
 
           tbl_row
         })
 
-      # Nest the `names_fcns_called` column
-      fcn_info_tbl <-
-        fcn_info_tbl %>%
+      # Nest the `names_fns_called` column
+      fn_info_tbl <-
+        fn_info_tbl %>%
         dplyr::group_by(
-          pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
-          ln_start, ln_end, lines, pkg_repo, pkg_path, n_pkg_fcns_called
+          pkg_name, pkg_src, fn_name, exported, r_file, r_file_path,
+          ln_start, ln_end, lines, pkg_repo, pkg_path, n_pkg_fns_called
         ) %>%
         tidyr::nest() %>%
-        dplyr::rename(pkg_fcns_called = data) %>%
-        dplyr::rename(fcn_lines = lines)
+        dplyr::rename(pkg_fns_called = data) %>%
+        dplyr::rename(fn_lines = lines)
 
-      if (.get_cyclocomp) {
+      if (isTRUE(.get_cyclocomp)) {
 
         # Join the cyclocomp data to the table
-        fcn_info_tbl <-
-          fcn_info_tbl %>%
-          dplyr::left_join(cc_df, by = c("fcn_name" = "name")) %>%
+        fn_info_tbl <-
+          fn_info_tbl %>%
+          dplyr::left_join(cc_df, by = c("fn_name" = "name")) %>%
           dplyr::select(
-            pkg_name, pkg_src, fcn_name, exported, r_file, r_file_path,
-            ln_start, ln_end, fcn_lines, cyclocomp, dplyr::everything()
+            pkg_name, pkg_src, fn_name, exported, r_file, r_file_path,
+            ln_start, ln_end, fn_lines, cyclocomp, dplyr::everything()
           )
       }
 
       # Get the function lines table
-      fcn_lines_tbl <-
-        get_fcn_lines_info(
+      fn_lines_tbl <-
+        get_fn_lines_info(
           getwd(),
-          .fcn_info_tbl = fcn_info_tbl,
+          .fn_info_tbl = fn_info_tbl,
           .make_clean = FALSE
         ) %>%
-        dplyr::group_by(fcn_name, subtype) %>%
+        dplyr::group_by(fn_name, subtype) %>%
         dplyr::summarize(lines = n()) %>%
         dplyr::ungroup() %>%
         tidyr::spread(key = subtype, value = lines, fill = 0) %>%
         dplyr::mutate(total_lines = blank + code + comment + roxygen) %>%
-        dplyr::select(fcn_name, code, comment, blank, roxygen, total_lines)
+        dplyr::select(fn_name, code, comment, blank, roxygen, total_lines)
 
       # Get the function line-type data to the table
-      fcn_info_tbl <-
-        fcn_lines_tbl %>%
-        dplyr::left_join(fcn_info_tbl, by = "fcn_name") %>%
+      fn_info_tbl <-
+        fn_lines_tbl %>%
+        dplyr::left_join(fn_info_tbl, by = "fn_name") %>%
         dplyr::select(
-          pkg_name, pkg_src, fcn_name, exported,
+          pkg_name, pkg_src, fn_name, exported,
           r_file, r_file_path, ln_start, ln_end,
-          fcn_lines, code, comment, blank,
+          fn_lines, code, comment, blank,
           roxygen, total_lines, dplyr::everything()
         )
 
       # Set the working directory back to the previous one
       setwd(dir = present_wd)
 
-      if (.make_clean) {
+      if (isTRUE(.make_clean)) {
 
         # Remove temporary directory
         if (dir.exists("./temp_pkgattrs")) {
 
-          unlink(
-            "./temp_pkgattrs",
-            recursive = TRUE, force = TRUE)
+          unlink("./temp_pkgattrs", recursive = TRUE, force = TRUE)
         }
       }
 
-      fcn_info_tbl
+      fn_info_tbl
     })
 
   chr_list_col <-
-    seq(nrow(fcn_info_tbl_all)) %>%
+    seq(nrow(fn_info_tbl_all)) %>%
     purrr::map_df(.f = function(x) {
 
-      if (all(is.na(fcn_info_tbl_all$pkg_fcns_called))) {
+      if (all(is.na(fn_info_tbl_all$pkg_fns_called))) {
 
         dplyr::tibble(
-          names_fcns_called = list(
-            names_fcns_called = vector(mode = "character")
+          names_fns_called = list(
+            names_fns_called = vector(mode = "character")
           )
         )
 
       } else {
 
         dplyr::tibble(
-          names_fcns_called = list(
-            names_fcns_called = fcn_info_tbl_all[[x, "pkg_fcns_called"]] %>%
-              dplyr::pull(names_fcns_called)
+          names_fns_called = list(
+            names_fns_called = fn_info_tbl_all[[x, "pkg_fns_called"]] %>%
+              dplyr::pull(names_fns_called)
           )
         )
       }
     })
 
-  fcn_info_tbl_all %>%
+  fn_info_tbl_all %>%
     dplyr::bind_cols(chr_list_col) %>%
-    dplyr::select(-pkg_fcns_called) %>%
-    dplyr::rename(pkg_fcns_called = names_fcns_called)
+    dplyr::select(-pkg_fns_called) %>%
+    dplyr::rename(pkg_fns_called = names_fns_called)
 }
