@@ -18,7 +18,7 @@ example where we can create an informative table of the functions in the
 `pkgattrs` and `blastula` packages (hosted on GitHub).
 
 ``` r
-fcn_info <-
+fn_info <-
   pkgattrs(
     from_github("rich-iannone/pkgattrs"),
     from_github("rich-iannone/blastula")
@@ -29,48 +29,48 @@ The resulting tibble contains the following information in each record:
 
   - the package name (`pkg_name`)
   - the package source location (`pkg_src`)
-  - the function name (`fcn_name`)
+  - the function name (`fn_name`)
   - whether the function is exported or not (`exported`)
   - the file that contains the function (`r_file`)
   - the relative path from pkg root to `r_file` (`r_file_path`)
   - the line number in `r_file` where the function starts (`ln_start`)
     and ends (`ln_end`)
-  - the number of lines used for the function (`fcn_lines`)
+  - the number of lines used for the function (`fn_lines`)
   - the number of lines in the function used for code (`code`), for
     comments (`comment`), and for roxygen statements (`roxygen`), and,
-    the `fcn_lines` lines that are blank (`blank`): the sum of all these
+    the `fn_lines` lines that are blank (`blank`): the sum of all these
     is given in `total_lines`
   - optionally, the cyclomatic complexity of the function (`cyclocomp`)
   - the name of the package repository, if it was obtained from one
     (`pkg_repo`)
   - the name of the package path, if it was a locally-available package
     (`pkg_path`)
-  - the number of package functions that are called in `fcn_name`
-    (`n_pkg_fcns_called`)
+  - the number of package functions that are called in `fn_name`
+    (`n_pkg_fns_called`)
   - a list column with the names of the package functions called in
-    `fcn_name` (`pkg_fcns_called`)
+    `fn_name` (`pkg_fns_called`)
 
 <!-- end list -->
 
 ``` r
-fcn_info
+fn_info
 #> # A tibble: 127 x 18
-#>    pkg_name pkg_src fcn_name exported r_file r_file_path ln_start ln_end
-#>    <chr>    <chr>   <chr>    <lgl>    <chr>  <chr>          <int>  <int>
-#>  1 pkgattrs GitHub  are_git… FALSE    utils… ./R/utils.R        4     12
-#>  2 pkgattrs GitHub  are_loc… FALSE    utils… ./R/utils.R       17     24
-#>  3 pkgattrs GitHub  from_gi… TRUE     from_… ./R/from_g…        8     16
-#>  4 pkgattrs GitHub  functio… TRUE     funct… ./R/functi…       11     21
-#>  5 pkgattrs GitHub  functio… TRUE     funct… ./R/functi…       35     54
-#>  6 pkgattrs GitHub  get_fcn… FALSE    get_f… ./R/get_fc…       13    139
-#>  7 pkgattrs GitHub  pkgattrs TRUE     pkgat… ./R/pkgatt…       13    363
-#>  8 pkgattrs GitHub  produce… FALSE    funct… ./R/functi…       57    103
-#>  9 pkgattrs GitHub  write_p… TRUE     write… ./R/write_…       10    101
-#> 10 blastula GitHub  `%||%`   FALSE    utils… ./R/utils.R       41     43
-#> # … with 117 more rows, and 10 more variables: fcn_lines <int>,
-#> #   code <dbl>, comment <dbl>, blank <dbl>, roxygen <dbl>,
-#> #   total_lines <dbl>, pkg_repo <chr>, pkg_path <chr>,
-#> #   n_pkg_fcns_called <int>, pkg_fcns_called <list>
+#>    pkg_name pkg_src fn_name exported r_file r_file_path ln_start ln_end
+#>    <chr>    <chr>   <chr>   <lgl>    <chr>  <chr>          <int>  <int>
+#>  1 pkgattrs GitHub  are_gi… FALSE    utils… ./R/utils.R        4     12
+#>  2 pkgattrs GitHub  are_lo… FALSE    utils… ./R/utils.R       17     24
+#>  3 pkgattrs GitHub  from_g… TRUE     from_… ./R/from_g…        8     16
+#>  4 pkgattrs GitHub  functi… TRUE     funct… ./R/functi…       11     21
+#>  5 pkgattrs GitHub  functi… TRUE     funct… ./R/functi…       35     54
+#>  6 pkgattrs GitHub  get_fc… FALSE    get_f… ./R/get_fc…       13    139
+#>  7 pkgattrs GitHub  pkgatt… TRUE     pkgat… ./R/pkgatt…       13    363
+#>  8 pkgattrs GitHub  produc… FALSE    funct… ./R/functi…       57    103
+#>  9 pkgattrs GitHub  write_… TRUE     write… ./R/write_…       10    101
+#> 10 blastula GitHub  `%||%`  FALSE    utils… ./R/utils.R       41     43
+#> # … with 117 more rows, and 10 more variables: fn_lines <int>, code <dbl>,
+#> #   comment <dbl>, blank <dbl>, roxygen <dbl>, total_lines <dbl>,
+#> #   pkg_repo <chr>, pkg_path <chr>, n_pkg_fns_called <int>,
+#> #   pkg_fns_called <list>
 ```
 
 The package also supplies functions for visualizing the relationships
@@ -99,7 +99,7 @@ are called by the `print.ptblank_agent()` method.
 
 ``` r
 pkgattrs(from_github("rich-iannone/pointblank")) %>%
-  function_graph_single(target_fcn = "print.ptblank_agent")
+  function_graph_single(target_fn = "print.ptblank_agent")
 ```
 
 <img src="man/figures/pointblank_graph_single.png">
@@ -110,14 +110,15 @@ package), we can generate a file that lists the exported functions along
 with each of the function arguments and default values.
 
 ``` r
-write_pkg_api(filename = "API")
+write_pkg_api(filename = "pkg_api")
 ```
 
 This example generates the following text in the `API` file:
 
     from_github(repo)
     function_graph_all(pkgattrs_tbl, pkg_name = NULL)
-    function_graph_single(pkgattrs_tbl, target_fcn, pkg_name = NULL)
+    function_graph_single(pkgattrs_tbl, target_fn, pkg_name = NULL)
+    pkg_api(...)
     pkgattrs(..., .make_clean = TRUE, .get_cyclocomp = FALSE)
     write_pkg_api(..., filename = "pkg_api")
 
