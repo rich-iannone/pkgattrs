@@ -5,7 +5,7 @@
 #'
 #' @param ... A series of objects pointing to package locations. These can be
 #'   strings with paths to local package directories, or, invocations of helper
-#'   functions such as \code{from_github()}.
+#'   functions such as `from_github()`.
 #' @param .make_clean An option to clean the working directory of any temporary
 #'   package files downloaded from GitHub.
 #' @param .get_cyclocomp An option to include a measure of each function's
@@ -43,13 +43,14 @@ pkgattrs <- function(...,
           src = "local",
           repo = NA_character_,
           url = NA_character_,
-          pkg_path = pkg_location_list[local_paths] %>% purrr::flatten_chr()
+          pkg_path = pkg_location_list[[local_paths]]
         )
       )
   }
 
   # Add GitHub paths to `pkg_locations`
   if (length(github_paths) > 0) {
+
     pkg_locations <-
       dplyr::bind_rows(
         pkg_locations,
@@ -87,9 +88,9 @@ pkgattrs <- function(...,
     seq(nrow(pkg_locations)) %>%
     purrr::map_df(.f = function(x) {
 
-       pkg_src <- pkg_locations$src[x]
+      pkg_src <- pkg_locations$src[x]
       pkg_repo <- pkg_locations$repo[x]
-       pkg_url <- pkg_locations$url[x]
+      pkg_url <- pkg_locations$url[x]
       pkg_path <- pkg_locations$pkg_path[x]
       pkg_name <- pkg_locations$pkg_name[x]
 
@@ -301,7 +302,7 @@ pkgattrs <- function(...,
           .make_clean = FALSE
         ) %>%
         dplyr::group_by(fn_name, subtype) %>%
-        dplyr::summarize(lines = n()) %>%
+        dplyr::summarize(lines = dplyr::n()) %>%
         dplyr::ungroup() %>%
         tidyr::spread(key = subtype, value = lines, fill = 0) %>%
         dplyr::mutate(total_lines = blank + code + comment + roxygen) %>%
@@ -360,4 +361,5 @@ pkgattrs <- function(...,
     dplyr::bind_cols(chr_list_col) %>%
     dplyr::select(-pkg_fns_called) %>%
     dplyr::rename(pkg_fns_called = names_fns_called)
+
 }
